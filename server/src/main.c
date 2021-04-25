@@ -1,4 +1,5 @@
-#include "../include/serial.h"
+#ifndef TESTING
+
 #include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -6,14 +7,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include "serial.h"
+#include "error.h"
 
 int main() {
 
     int arduino = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
     if (arduino == -1) {
 
-        fprintf(stderr, "Unable to open arduino fd: %d\n", errno);
-        return -1;
+        error("open", errno, 1);
     }
     set_port_config(arduino, B115200);
 
@@ -46,9 +48,11 @@ int main() {
 
     if (close(arduino) < 0) {
 
-        fprintf(stderr, "Unable to close arduino fd: %d\n", errno);
+        fprintf(stderr, "ERROR %d: Unable to close arduino fd: %s\n", errno, strerror(errno));
         return -1;
     }
 
     return 0;
 }
+
+#endif

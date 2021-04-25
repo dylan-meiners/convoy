@@ -1,4 +1,4 @@
-#include "../include/serial.h"
+#include "serial.h"
 #include <termios.h>
 #include <errno.h>
 #include <stdio.h>
