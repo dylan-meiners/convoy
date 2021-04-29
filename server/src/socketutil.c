@@ -1,3 +1,4 @@
+
 #include "socketutil.h"
 
 int su_socket(int domain, int type, int protocol) {
@@ -24,7 +25,7 @@ int su_bind(int fd, int family, uint32_t addr, int port) {
         error(__FUNCTION__, errno, 1);
         return -1;
     }
-    return 1;
+    return 0;
 }
 
 int su_listen(int fd, int max_connects) {
@@ -35,7 +36,7 @@ int su_listen(int fd, int max_connects) {
         error(__FUNCTION__, errno, 1);
         return -1;
     }
-    return 1;
+    return 0;
 }
 
 su_accept_resp* su_accept(int fd) {
@@ -61,7 +62,7 @@ int su_shutdown(int fd) {
         error(__FUNCTION__, errno, 0);
         return -1;
     }
-    return 1;
+    return 0;
 }
 
 int su_close(int fd) {
@@ -72,7 +73,7 @@ int su_close(int fd) {
         error(__FUNCTION__, errno, 0);
         return -1;
     }
-    return 1;
+    return 0;
 }
 
 int su_write(int fd, const void* data, size_t size) {
@@ -83,6 +84,35 @@ int su_write(int fd, const void* data, size_t size) {
         error(__FUNCTION__, errno, 0);
         return -1;
     }
-    usleep(100 * size);
-    return 1;
+    //usleep(100 * size);
+    return 0;
+}
+
+int su_getsockopt(int fd, int level, int optname, void* optval, socklen_t* optlen) {
+
+	int result = getsockopt(fd, level, optname, optval, optlen);
+	if (result < 0) {
+
+		error(__FUNCTION__, errno, 0);
+		return -1;
+	}
+	return 0;
+}
+
+int su_connected(int fd) {
+
+	struct pollfd pfd = {
+		.fd = fd,
+		.events = POLLRDHUP
+	};
+	if (poll(&pfd, 1, 100) < 0) {
+
+		error(__FUNCTION__, errno, 0);
+		return -2;
+	}
+	if (pfd.revents & POLLRDHUP) {
+
+		return -1;
+	}
+	return 0;
 }

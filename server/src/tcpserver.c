@@ -11,7 +11,11 @@ void end();
 
 int main() {
 
+	//char y = '\0';
+	//su_write(0, &y, 1);
+
     signal(SIGINT, end);
+    signal(SIGPIPE, SIG_IGN);
 
     client = (su_accept_resp*)malloc(sizeof(su_accept_resp));
 
@@ -33,6 +37,7 @@ int main() {
             inet_ntop(AF_INET, &client->c_addr->sin_addr, c_addr, INET_ADDRSTRLEN);
             printf("A client at %s:%d has connected to the server\n", c_addr, ntohs(client->c_addr->sin_port));
         }
+        
         int c = 0;
         while (1) {
             
@@ -47,8 +52,15 @@ int main() {
                 buf[255] = ' ';
                 c++;
             }
+            //close(client->c_fd);
+            if (su_connected(client->c_fd) == -1) {
+
+            	printf("Socket disconnected\n");
+            	break;
+            }
             su_write(client->c_fd, buf, 256);
         }
+        usleep(250000);
     }
 
     end();
