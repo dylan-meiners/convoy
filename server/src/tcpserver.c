@@ -17,7 +17,7 @@ int main() {
     signal(SIGINT, end);
     signal(SIGPIPE, SIG_IGN);
 
-    client = (su_accept_resp*)malloc(sizeof(su_accept_resp));
+    client = malloc(sizeof(su_accept_resp));
 
     server = su_socket(AF_INET, SOCK_STREAM, 0);
     su_bind(server, AF_INET, htonl(INADDR_ANY), 2542);
@@ -52,7 +52,6 @@ int main() {
                 buf[255] = ' ';
                 c++;
             }
-            //close(client->c_fd);
             if (su_connected(client->c_fd) == -1) {
 
             	printf("Socket disconnected\n");
