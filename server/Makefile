@@ -4,14 +4,14 @@ SRC_DIR ?= ./src
 TARGET_EXEC ?= convoy
 SRCS := $(shell find $(SRC_DIR) -name *.c)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
+TEST = NO_TEST
+CPPFLAGS += -D $(TEST)
+LDFLAGS += -lpthread
 
 all: $(BUILD_DIR)/$(TARGET_EXEC)
 
-test: CPPFLAGS += -D TESTING
-test: all
-
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CC) $(OBJS) -o $@
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
 $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)

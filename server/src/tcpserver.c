@@ -1,4 +1,4 @@
-#ifdef TESTING
+#ifdef TCPSERVER_TEST
 
 #include <arpa/inet.h>
 #include <signal.h>
@@ -17,8 +17,6 @@ int main() {
     signal(SIGINT, end);
     signal(SIGPIPE, SIG_IGN);
 
-    client = malloc(sizeof(su_accept_resp));
-
     server = su_socket(AF_INET, SOCK_STREAM, 0);
     su_bind(server, AF_INET, htonl(INADDR_ANY), 2542);
     su_listen(server, 1);
@@ -32,9 +30,7 @@ int main() {
         client = su_accept(server);
         if (client != NULL) {
 
-            char c_addr[INET_ADDRSTRLEN];
-            memset(c_addr, 0, INET_ADDRSTRLEN * sizeof(char));
-            inet_ntop(AF_INET, &client->c_addr->sin_addr, c_addr, INET_ADDRSTRLEN);
+            char* c_addr = su_addrtos(AF_INET, &client->c_addr->sin_addr);
             printf("A client at %s:%d has connected to the server\n", c_addr, ntohs(client->c_addr->sin_port));
         }
         
