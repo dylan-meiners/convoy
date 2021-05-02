@@ -1,17 +1,23 @@
 CC = gcc
 BUILD_DIR ?= ./build
 SRC_DIR ?= ./src
-TARGET_EXEC ?= convoy
-SRCS := $(shell find $(SRC_DIR) -name *.c)
+SRCS := $(shell find $(SRC_DIR) -name *.c ! -name server.c ! -name client.c)
+SERVER_SRC := $(shell find $(SRC_DIR) -name server.c)
+CLIENT_SRC := $(shell find $(SRC_DIR) -name client.c)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
+SERVER_OBJ := $(SERVER_SRC:%=$(BUILD_DIR)/%.o)
+CLIENT_OBJ := $(CLIENT_SRC:%=$(BUILD_DIR)/%.o)
 TEST = NO_TEST
 CPPFLAGS += -D $(TEST)
 LDFLAGS += -lpthread
 
-all: $(BUILD_DIR)/$(TARGET_EXEC)
+all: SERVER CLIENT
 
-$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+SERVER: $(SERVER_OBJ)
+	$(CC) $(OBJS) $^ -o $(BUILD_DIR)/server $(LDFLAGS)
+
+CLIENT: $(CLIENT_OBJ)
+	$(CC) $(OBJS) $^ -o $(BUILD_DIR)/client $(LDFLAGS)
 
 $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)
