@@ -18,6 +18,7 @@ typedef struct su_accept_resp {
 
 int su_socket(int, int, int);
 int su_bind(int, int, uint32_t, int, int);
+int su_connect(int, int, uint32_t, int, int);
 int su_listen(int, int);
 su_accept_resp* su_accept(int);
 int su_shutdown(int);

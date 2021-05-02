@@ -27,6 +27,22 @@ int su_bind(int fd, int family, uint32_t addr, int port, int kill) {
     return 0;
 }
 
+int su_connect(int fd, int family, uint32_t addr, int port, int kill) {
+
+    struct sockaddr_in in;
+    memset(&in, 0, sizeof(in));
+    in.sin_family = family;
+    in.sin_addr.s_addr = addr;
+    in.sin_port = htons(port);
+    int result = connect(fd, (struct sockaddr*)&in, sizeof(in));
+    if (result < 0) {
+
+        error(__FUNCTION__, errno, kill);
+        return -1;
+    }
+    return 0;
+}
+
 int su_listen(int fd, int max_connects) {
 
     int result = listen(fd, max_connects);
