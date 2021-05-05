@@ -103,6 +103,17 @@ int su_write(int fd, const void* data, size_t size) {
     return 0;
 }
 
+int su_read(int fd, void* data, size_t size) {
+
+	int result = read(fd, data, size);
+	if (result < 0) {
+
+		error(__FUNCTION__, errno, 0);
+		return -1;
+	}
+	return 0;
+}
+
 int su_getsockopt(int fd, int level, int optname, void* optval, socklen_t* optlen) {
 
 	int result = getsockopt(fd, level, optname, optval, optlen);
@@ -120,7 +131,7 @@ int su_connected(int fd) {
 		.fd = fd,
 		.events = POLLRDHUP
 	};
-	if (poll(&pfd, 1, 100) < 0) {
+	if (poll(&pfd, 1, 1) < 0) {
 
 		error(__FUNCTION__, errno, 0);
 		return -2;
