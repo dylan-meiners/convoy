@@ -3,6 +3,9 @@ import logger
 import time
 import socket
 import ks
+from contextlib import closing
+import middleman
+import errno
 
 class Dispatcher:
 
@@ -14,15 +17,47 @@ class Dispatcher:
         logger.log(msg, ["dispatcher"])
 
     def main(self):
+        self._log("main")
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind((ks.HOST, ks.PORT_DISPATCHER))
+        bound = False
+        self._log("Waiting for dispatcher to bind...")
+        while not bound:
+            try:
+                server.bind((ks.HOST, ks.PORT_DISPATCHER))
+                bound = True
+            except socket.error as error:
+                if error.errno != 98:
+                    self._log("Unable to bind dispatcher port, but the error is not 98")
+            time.sleep(.1)
+        self._log("Dispatcher bound")
         server.listen()
         while True:
             client, addr = server.accept()
             with client:
                 self._log("A client has connected on port " + str(addr[ks.INDEX_ADDR_PORT]))
-                while True:
-                    client.sendall([0])
+                port = self.first_avail()
+                self._log("First open port is: " + str(port))
+                client.sendall(port.to_bytes(2, "big", signed=False))
+                middleman_thread = threading.Thread(target=middleman.Middleman(port).main)
+                middleman_thread.start()
+
+    def port_is_open(self, port: int):
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+            try:
+                s.bind((ks.HOST, port))
+                return True
+            except socket.error as error:
+                self._log("Already bound on port: " + str(port) + " with error: " + str(error.errno))
+                return False
+
+    # TODO: This is probably a terrible way to do this... It could literally hang forever
+    def first_avail(self):
+        port = ks.PORT_CLIENT_BASE
+        while True:
+            if self.port_is_open(port):
+                return port
+            else:
+                port = port + 1
 
     def get_next(self):
         pass

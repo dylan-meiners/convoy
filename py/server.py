@@ -5,12 +5,13 @@ import time
 
 def main():
     _log("init")
+    _log("main")
     # format = "[%(asctime)s][%(thread)-12s] %(message)s"
     # logging.basicConfig(format=format, level=logging.INFO, datefmt="%H:%M:%S")
     # logging.getLogger("main")
     # logging.info("Welcome")
     disp = dispatcher.Dispatcher()
-    disp_thread = threading.Thread(target=disp.main, daemon=True)
+    disp_thread = threading.Thread(target=disp.main)
     disp_thread.start()
 
     while True:
