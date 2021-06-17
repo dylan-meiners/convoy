@@ -1,0 +1,18 @@
+[to arduino]
+
+(data)
+data[0] = mode
+data[1] = number of bytes to be sent (n)
+data[2:2+n-1] = data
+
+send ready
+recv ack
+if ack not good or no ack:
+    restart
+else:
+    send (data)
+
+[to client]
+
+(data)
+data[0] = 

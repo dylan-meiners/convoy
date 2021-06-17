@@ -13,8 +13,19 @@ class Middleman:
         self._log("main")
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind((ks.HOST, self._port))
+        server.listen()
         while True:
-            time.sleep(1)
+            client, addr = server.accept()
+            with client:
+                self._log("A client has connected on port: " + str(addr[ks.INDEX_ADDR_PORT]))
+                while True:
+                    client.sendall(bytes([ks.ASCII_DATA_REQUEST_SEND]))
+                    ack = client.recv(1)
+                    if ack[0] == ks.ASCII_ACK:
+                        self._log("Good ack")
+                        client.sendall(ks.SAMPLE_256_BYTES)
+                    else:
+                        self._log("Bad ack")
 
     def _log(self, msg):
         logger.log(msg, ["middleman", str(self._port)])

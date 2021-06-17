@@ -1,3 +1,4 @@
 .vscode/*
-*/build/*
 convoy
+*/__pycache__
+venv

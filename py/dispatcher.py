@@ -6,12 +6,12 @@ import ks
 from contextlib import closing
 import middleman
 import errno
+import socketutil
 
 class Dispatcher:
 
     def __init__(self):
         self._log("init")
-        pass
 
     def _log(self, msg):
         logger.log(msg, ["dispatcher"])
@@ -19,16 +19,8 @@ class Dispatcher:
     def main(self):
         self._log("main")
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        bound = False
         self._log("Waiting for dispatcher to bind...")
-        while not bound:
-            try:
-                server.bind((ks.HOST, ks.PORT_DISPATCHER))
-                bound = True
-            except socket.error as error:
-                if error.errno != 98:
-                    self._log("Unable to bind dispatcher port, but the error is not 98")
-            time.sleep(.1)
+        socketutil.bind_forever(server, ks.HOST, ks.PORT_DISPATCHER)
         self._log("Dispatcher bound")
         server.listen()
         while True:
