@@ -2,3 +2,5 @@
 convoy
 */__pycache__
 venv
+*.elf
+*.hex

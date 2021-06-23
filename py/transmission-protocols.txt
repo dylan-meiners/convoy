@@ -14,5 +14,12 @@ else:
 
 [to client]
 
+send (data)
+recv ack
+if ack not good or no ack:
+    restart
+
 (data)
-data[0] = 
+data[0] = SOH
+data[1] = number of bytes to be sent (n)
+data[2] = EOT

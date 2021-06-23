@@ -7,11 +7,11 @@ import serial
 class Client:
 
     def __init__(self):
+        self._port = None
         self._log("init")
         arduino = serial.Serial("/dev/ttyACM0", ks.SERIAL_BAUD, timeout=ks.SERIAL_TIMEOUT)
         self._log("Initialized serial on: " + str(arduino.name) + " with baud: " + str(ks.SERIAL_BAUD) +  " and timeout: " + str(ks.SERIAL_TIMEOUT))
         
-        self._port = None
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.connect((ks.HOST, ks.PORT_DISPATCHER))
         port_raw = server.recv(2)
