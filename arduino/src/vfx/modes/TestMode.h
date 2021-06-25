@@ -13,23 +13,44 @@ class TestMode : public Mode {
         TestMode() {
 
             m_step = 0;
+            forward = true;
         }
 
         void step() {
 
+            digitalWrite(LED_BUILTIN, HIGH);
             Vehicle::GetInstance().Clear();
             Location* l = Vehicle::GetInstance().GetFullLocation(m_step);
             Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(0, 255, 255);
-            if (m_step > Vehicle::GetInstance().GetTotal() - 1) {
+            if (forward) {
 
-                m_step = 0;
+                m_step++;
+                if (m_step > Vehicle::GetInstance().GetTotal() - 1) {
+
+                    forward = false;
+                    m_step -= 2;
+                }
+            }
+            else {
+
+                m_step--;
+                if (m_step < 0) {
+
+                    forward = true;
+                    m_step = 1;
+                }
             }
         }
 
-        void reset() {}
+        void reset() {
+
+            m_step = 0;
+            forward = true;
+        }
 
     private:
         int m_step;
+        bool forward;
 };
 
 #endif
