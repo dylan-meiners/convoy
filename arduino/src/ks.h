@@ -11,4 +11,6 @@ const int K_NUM_LEDS_STRIP_RIGHT    = 90;
 const int K_NUM_LEDS_STRIP_LEFT     = 90;
 const int K_NUM_LEDS_STRIP_BACK     = 45;
 
+const double WAVE_SPEED_SCALAR      = 1.0;
+
 #endif

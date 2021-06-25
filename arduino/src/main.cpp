@@ -7,6 +7,7 @@
 #include "Strip.h"
 #include "ks.h"
 #include "vfx/modes/TestMode.h"
+#include "vfx/modes/RainbowWave.h"
 
 Strip* stripFront   = new Strip(K_PIN_STRIP_FRONT,  K_NUM_LEDS_STRIP_FRONT, Strip::Type::kFront);
 //Strip* stripRight   = new Strip(K_PIN_STRIP_RIGHT,  K_NUM_LEDS_STRIP_RIGHT, Strip::Type::kRight);
@@ -15,11 +16,13 @@ Strip* stripFront   = new Strip(K_PIN_STRIP_FRONT,  K_NUM_LEDS_STRIP_FRONT, Stri
 std::vector<Strip*> strips;
 
 Mode* modes[] = {
-    new TestMode()
+    new TestMode(),
+    new RainbowWave()
 };
 
 enum E_Mode {
-    kTestMode
+    kTestMode,
+    kRainbowWave
 };
 
 E_Mode activeMode;
@@ -42,7 +45,7 @@ void setup() {
 
     Serial.begin(115200);
 
-    activeMode = kTestMode;
+    activeMode = kRainbowWave;
     modes[activeMode]->reset();
 
     FastLED.clear();
@@ -53,7 +56,6 @@ void loop() {
 
     modes[activeMode]->step();
     FastLED.show();
-    delay(1);
 }
 
 void switchMode(E_Mode modeToSwtichTo) {

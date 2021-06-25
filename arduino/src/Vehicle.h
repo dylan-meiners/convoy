@@ -221,7 +221,6 @@ class Vehicle {
             Location* toReturn = new Location;
             int runningIndex = 0;
             for (toReturn->strip = 0; toReturn->strip < m_strips->size(); toReturn->strip++) {
-
                 if (runningIndex + (*m_strips)[toReturn->strip]->GetNumLEDs() > index) {
 
                     toReturn->led = index - runningIndex;

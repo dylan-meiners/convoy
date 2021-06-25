@@ -13,31 +13,36 @@ class TestMode : public Mode {
         TestMode() {
 
             m_step = 0;
-            forward = true;
+            m_forward = true;
+            m_timer = 0;
         }
 
         void step() {
 
-            digitalWrite(LED_BUILTIN, HIGH);
-            Vehicle::GetInstance().Clear();
-            Location* l = Vehicle::GetInstance().GetFullLocation(m_step);
-            Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(0, 255, 255);
-            if (forward) {
+            long now = millis();
+            if (now - m_timer >= 0) {
+                
+                m_timer = now;
+                Vehicle::GetInstance().Clear();
+                Location* l = Vehicle::GetInstance().GetFullLocation(m_step);
+                Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(0, 255, 255);
+                if (m_forward) {
 
-                m_step++;
-                if (m_step > Vehicle::GetInstance().GetTotal() - 1) {
+                    m_step++;
+                    if (m_step > Vehicle::GetInstance().GetTotal() - 1) {
 
-                    forward = false;
-                    m_step -= 2;
+                        m_forward = false;
+                        m_step -= 2;
+                    }
                 }
-            }
-            else {
+                else {
 
-                m_step--;
-                if (m_step < 0) {
+                    m_step--;
+                    if (m_step < 0) {
 
-                    forward = true;
-                    m_step = 1;
+                        m_forward = true;
+                        m_step = 1;
+                    }
                 }
             }
         }
@@ -45,12 +50,14 @@ class TestMode : public Mode {
         void reset() {
 
             m_step = 0;
-            forward = true;
+            m_forward = true;
+            m_timer = millis();
         }
 
     private:
         int m_step;
-        bool forward;
+        bool m_forward;
+        long m_timer;
 };
 
 #endif
