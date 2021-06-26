@@ -33,6 +33,14 @@ class Strip {
             return m_numLEDs;
         }
 
+        void SetAllHSV(uint8_t h, uint8_t s, uint8_t v) {
+
+            for (int i = 0; i < m_numLEDs; i++) {
+
+                leds[i] = CHSV(h, s, v);
+            }
+        }
+
         CRGB* leds;
 
     private:

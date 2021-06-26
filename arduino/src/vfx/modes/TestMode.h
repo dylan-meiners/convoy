@@ -6,6 +6,7 @@
 #include <vector>
 #include "../Mode.h"
 #include "../../Vehicle.h"
+#include "../../Timer.h"
 
 class TestMode : public Mode {
 
@@ -14,18 +15,18 @@ class TestMode : public Mode {
 
             m_step = 0;
             m_forward = true;
-            m_timer = 0;
+            m_timer = new Timer;
+            m_timer->SetInterval(0);
         }
 
-        void step() {
+        bool step() {
 
-            long now = millis();
-            if (now - m_timer >= 0) {
-                
-                m_timer = now;
+            if (m_timer->RunInterval()) {
+            
                 Vehicle::GetInstance().Clear();
                 Location* l = Vehicle::GetInstance().GetFullLocation(m_step);
                 Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(0, 255, 255);
+                delete l;
                 if (m_forward) {
 
                     m_step++;
@@ -45,19 +46,20 @@ class TestMode : public Mode {
                     }
                 }
             }
+            return false;
         }
 
         void reset() {
 
             m_step = 0;
             m_forward = true;
-            m_timer = millis();
+            m_timer->Restart();
         }
 
     private:
         int m_step;
         bool m_forward;
-        long m_timer;
+        Timer* m_timer;
 };
 
 #endif

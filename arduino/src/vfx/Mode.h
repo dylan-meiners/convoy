@@ -4,7 +4,7 @@
 class Mode {
 
     public:
-        virtual void step();
+        virtual bool step();
         virtual void reset();
 };
 

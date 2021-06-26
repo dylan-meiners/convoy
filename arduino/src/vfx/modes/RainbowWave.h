@@ -16,7 +16,7 @@ class RainbowWave : public Mode {
             m_waveCounter = 0.0;
         }
 
-        void step() {
+        bool step() {
                 
             for (int i = 0; i < Vehicle::GetInstance().GetTotal(); i++) {
                 
@@ -29,6 +29,7 @@ class RainbowWave : public Mode {
                 delete l;
             }
             m_waveCounter += (255.0 / (double)Vehicle::GetInstance().GetTotal()) * WAVE_SPEED_SCALAR;
+            return false;
         }
 
         void reset() {

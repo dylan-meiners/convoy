@@ -241,6 +241,14 @@ class Vehicle {
             }
         }
 
+        void SetAllHSV(uint8_t h, uint8_t s, uint8_t v) {
+
+            for (int i = 0; i < m_strips->size(); i++) {
+
+                (*m_strips)[i]->SetAllHSV(h, s, v);
+            }
+        }
+
     private:
         Vehicle(const Vehicle&) = delete;
         Vehicle& operator=(const Vehicle&) = delete;
