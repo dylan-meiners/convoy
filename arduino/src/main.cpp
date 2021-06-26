@@ -34,8 +34,6 @@ void switchMode(E_Mode, bool force = false);
 void playQuickMode(E_Mode);
 void ClearSerial();
 
-CRGB leds[45];
-
 void setup() {
     
     pinMode(LED_BUILTIN, OUTPUT);
