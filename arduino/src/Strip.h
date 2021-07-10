@@ -20,7 +20,16 @@ class Strip {
             m_pin = pinToSet;
             m_numLEDs = numLEDsToSet;
             m_type = typeToSet;
-            leds = new CRGB[m_numLEDs];
+            m_rgb = new CRGB[m_numLEDs];
+            leds = new CHSV[m_numLEDs];
+        }
+
+        void MoveHSVToRGB() {
+
+            for (int i = 0; i < m_numLEDs; i++) {
+
+                m_rgb[i] = leds[i];
+            }
         }
 
         int GetPin() {
@@ -33,6 +42,11 @@ class Strip {
             return m_numLEDs;
         }
 
+        CRGB* GetRGBArray() {
+
+            return m_rgb;
+        }
+
         void SetAllHSV(uint8_t h, uint8_t s, uint8_t v) {
 
             for (int i = 0; i < m_numLEDs; i++) {
@@ -41,12 +55,13 @@ class Strip {
             }
         }
 
-        CRGB* leds;
+        CHSV* leds;
 
     private:
         int m_pin;
         int m_numLEDs;
         Type m_type;
+        CRGB* m_rgb;
 };
 
 #endif

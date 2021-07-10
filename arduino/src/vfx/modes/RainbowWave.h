@@ -22,13 +22,13 @@ class RainbowWave : public Mode {
                 
                 Location* l = Vehicle::GetInstance().GetFullLocation(i);
                 Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(
-                    fmod((i * 255.0 / (double)Vehicle::GetInstance().GetTotal()) + m_waveCounter * WAVE_SPEED_SCALAR, 255.0),
+                    fmod((i * 255.0 / (double)Vehicle::GetInstance().GetTotal()) + m_waveCounter * K_MODE_RAINBOW_WAVE_SPEED_SCALAR, 255.0),
                     255,
                     255
                 );
                 delete l;
             }
-            m_waveCounter += (255.0 / (double)Vehicle::GetInstance().GetTotal()) * WAVE_SPEED_SCALAR;
+            m_waveCounter += (255.0 / (double)Vehicle::GetInstance().GetTotal()) * K_MODE_RAINBOW_WAVE_SPEED_SCALAR;
             return false;
         }
 
