@@ -20,9 +20,11 @@ class Flow : public Mode {
 
             m_dir = direction;
             dataLength = K_MODE_DATA_LENGTH_FLOW;
+            m_timer = new Timer;
+            m_fadeTimer = new Timer;
             data = new uint8_t[dataLength];
             m_flowLength = K_MODE_FLOW_LENGTH;
-            m_flowPercentPerSecond = K_MODE_FLOW_PERCENT_PER_SECOND;
+            m_speed = K_MODE_FLOW_SPEED_MS;
             m_color = CHSV(
                 K_MODE_FLOW_COLOR_HSV_H,
                 K_MODE_FLOW_COLOR_HSV_S,
@@ -33,23 +35,26 @@ class Flow : public Mode {
             ResetHead();
         }
 
-        bool _step() {
+        bool step() {
 
             RandomFadeToBlack();
 
-            for (int i = 0; i < m_flowLength; i++) {
-
-                if (m_head + i < Vehicle::GetInstance().GetTotal()) {
+            if (m_timer->RunInterval()) {
                 
-                    Location* l = Vehicle::GetInstance().GetFullLocation(m_head + i);
-                    Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = m_color;
+                for (int i = 0; i < m_flowLength; i++) {
+
+                    if (m_head + i < Vehicle::GetInstance().GetTotal()) {
+                    
+                        Location* l = Vehicle::GetInstance().GetFullLocation(m_head + i);
+                        Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = m_color;
+                    }
+                    m_fade[m_head] = random(8) + 1;
                 }
-                m_fade[m_head] = 15;//random(15) + 15;
-            }
 
-            if (++m_head >= Vehicle::GetInstance().GetTotal()) {
+                if (++m_head >= Vehicle::GetInstance().GetTotal()) {
 
-                m_head = 0;
+                    m_head = 0;
+                }
             }
             return false;
         }
@@ -58,6 +63,9 @@ class Flow : public Mode {
 
             memset(m_fade, 0, Vehicle::GetInstance().GetTotal());
             ResetHead();
+            m_timer->SetInterval(m_speed);
+            m_timer->Restart();
+            m_fadeTimer->SetIterationInterval(K_MODE_FLOW_FADE_ITER);
         }
 
         void RandomFadeToBlack() {
@@ -67,6 +75,10 @@ class Flow : public Mode {
                 if (m_fade[i] > 0) {
                 
                     Location* l = Vehicle::GetInstance().GetFullLocation(i);
+                    if (m_fadeTimer->RunIterationInterval()) {
+                        
+                        Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led].h++;
+                    }
                     uint8_t* v = &Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led].v;
                     if (*v < m_fade[i]) {
 
@@ -83,13 +95,13 @@ class Flow : public Mode {
 
     private:
         int m_flowLength;
-        double m_flowPercentPerSecond;
+        double m_speed;
         CHSV m_color;
 
-        void _parse() {
+        void parse() {
 
             m_flowLength = data[0];
-            m_flowPercentPerSecond = data[1] / 255.0;
+            m_speed = data[1];
             m_color = CHSV(
                 data[2],
                 data[3],
@@ -106,7 +118,8 @@ class Flow : public Mode {
         int m_head;
 
         uint8_t* m_fade;
-
+        Timer* m_timer;
+        Timer* m_fadeTimer;
 };
 
 #endif

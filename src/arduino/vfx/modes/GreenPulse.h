@@ -17,7 +17,7 @@ class GreenPulse : public Mode {
             data = nullptr;
         }
 
-        bool _step() {
+        bool step() {
             
             switch (m_status) {
 
@@ -76,7 +76,7 @@ class GreenPulse : public Mode {
 
     private:
 
-        void _parse() {}
+        void parse() {}
 
         void Set(bool on = true) {
 

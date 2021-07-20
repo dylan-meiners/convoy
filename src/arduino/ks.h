@@ -28,10 +28,11 @@ const int K_MODE_DATA_LENGTH_RAINBOW_WAVE   = 1;
 
 const double K_MODE_RAINBOW_WAVE_SPEED_SCALAR   = 1.0;
 
-const double K_MODE_FLOW_PERCENT_PER_SECOND     = 1.0 / 3.0;
-const int K_MODE_FLOW_LENGTH                    = 3;
-const uint8_t K_MODE_FLOW_COLOR_HSV_H           = 128;
-const uint8_t K_MODE_FLOW_COLOR_HSV_S           = 255;
-const uint8_t K_MODE_FLOW_COLOR_HSV_V           = 255;
+const int K_MODE_FLOW_SPEED_MS          = 25;
+const int K_MODE_FLOW_FADE_ITER         = 2;
+const int K_MODE_FLOW_LENGTH            = 3;
+const uint8_t K_MODE_FLOW_COLOR_HSV_H   = 128;
+const uint8_t K_MODE_FLOW_COLOR_HSV_S   = 255;
+const uint8_t K_MODE_FLOW_COLOR_HSV_V   = 255;
 
 #endif

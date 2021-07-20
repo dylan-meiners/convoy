@@ -9,12 +9,19 @@ class Timer {
             m_running = false;
             m_intervalSet = false;
             m_interval = 0;
+            m_iter = 0;
+            m_iterInterval = 0;
         }
 
         void SetInterval(long interval) {
 
             m_interval = interval;
             m_intervalSet = true;
+        }
+
+        void SetIterationInterval(int interval) {
+
+            m_iterInterval = interval;
         }
 
         void Restart() {
@@ -45,11 +52,27 @@ class Timer {
             return false;
         }
 
+        bool RunIterationInterval() {
+
+            if (m_iter == m_iterInterval) {
+
+                m_iter = 0;
+                return true;
+            }
+            else {
+
+                m_iter++;
+                return false;
+            }
+        }
+
     private:
         long m_time;
         bool m_intervalSet;
         long m_interval;
         bool m_running;
+        int m_iter;
+        int m_iterInterval;
 };
 
 #endif

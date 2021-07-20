@@ -21,7 +21,7 @@ class TestMode : public Mode {
             data = nullptr;
         }
 
-        bool _step() {
+        bool step() {
 
             if (m_timer->RunInterval()) {
             
@@ -58,7 +58,7 @@ class TestMode : public Mode {
         }
 
     private:
-        void _parse() {}
+        void parse() {}
 
         int m_step;
         bool m_forward;

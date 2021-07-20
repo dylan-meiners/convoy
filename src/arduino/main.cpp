@@ -89,8 +89,10 @@ void processSerial() {
                 if (modes[mode]->dataLength > 0) {
                     
                     memcpy(modes[mode]->data, data, modes[mode]->dataLength);
+                    modes[mode]->parse();
                 }
             }
+            switchMode((E_Mode)mode);
         }
     }
 }

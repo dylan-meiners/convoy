@@ -19,7 +19,7 @@ class RainbowWave : public Mode {
             m_waveSpeedScalar = K_MODE_RAINBOW_WAVE_SPEED_SCALAR;
         }
 
-        bool _step() {
+        bool step() {
                 
             for (int i = 0; i < Vehicle::GetInstance().GetTotal(); i++) {
                 
@@ -42,7 +42,7 @@ class RainbowWave : public Mode {
     private:
         double m_waveSpeedScalar;
 
-        void _parse() {
+        void parse() {
 
             m_waveSpeedScalar = data[0] / 255.0;
         }
