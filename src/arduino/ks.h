@@ -18,7 +18,7 @@ const uint8_t K_COLOR_HSV_V_GREEN   = 255;
 const double K_MODE_RAINBOW_WAVE_SPEED_SCALAR   = 1.0;
 
 const double K_MODE_FLOW_PERCENT_PER_SECOND     = 1.0 / 3.0;
-const int K_MODE_FLOW_LENGTH                    = 5;
+const int K_MODE_FLOW_LENGTH                    = 3;
 const uint8_t K_MODE_FLOW_COLOR_HSV_H           = 128;
 const uint8_t K_MODE_FLOW_COLOR_HSV_S           = 255;
 const uint8_t K_MODE_FLOW_COLOR_HSV_V           = 255;

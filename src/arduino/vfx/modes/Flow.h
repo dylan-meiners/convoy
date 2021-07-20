@@ -58,10 +58,11 @@ class Flow : public Mode {
 
                 Location* l = Vehicle::GetInstance().GetFullLocation(i);
                 uint8_t* old = &Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led].v;
+                delete l;
                 long rand = random(10);
                 if (rand >= 5) {
 
-                    *old -= *old >= 10 ? 10 : *old;
+                    *old -= *old >= 15 ? 15 : *old;
                 }
             }
         }
