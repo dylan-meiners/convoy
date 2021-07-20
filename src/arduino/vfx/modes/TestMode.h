@@ -17,16 +17,17 @@ class TestMode : public Mode {
             m_forward = true;
             m_timer = new Timer;
             m_timer->SetInterval(0);
+            dataLength = 0;
+            data = nullptr;
         }
 
-        bool step() {
+        bool _step() {
 
             if (m_timer->RunInterval()) {
             
                 Vehicle::GetInstance().Clear();
                 Location* l = Vehicle::GetInstance().GetFullLocation(m_step);
                 Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(0, 255, 255);
-                delete l;
                 if (m_forward) {
 
                     m_step++;
@@ -57,6 +58,8 @@ class TestMode : public Mode {
         }
 
     private:
+        void _parse() {}
+
         int m_step;
         bool m_forward;
         Timer* m_timer;

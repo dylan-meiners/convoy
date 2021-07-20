@@ -9,8 +9,8 @@ class Client:
     def __init__(self):
         self._port = None
         self._log("init")
-        arduino = serial.Serial("/dev/ttyACM0", ks.SERIAL_BAUD, timeout=ks.SERIAL_TIMEOUT)
-        self._log("Initialized serial on: " + str(arduino.name) + " with baud: " + str(ks.SERIAL_BAUD) +  " and timeout: " + str(ks.SERIAL_TIMEOUT))
+        self.arduino = serial.Serial("/dev/ttyACM0", ks.SERIAL_BAUD, timeout=ks.SERIAL_TIMEOUT)
+        self._log("Initialized serial on: " + str(self.arduino.name) + " with baud: " + str(ks.SERIAL_BAUD) +  " and timeout: " + str(ks.SERIAL_TIMEOUT))
         
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.connect((ks.HOST, ks.PORT_DISPATCHER))
@@ -38,11 +38,23 @@ class Client:
                         break
                 if good:
                     self._log("Good data")
+
                 else:
                     self._log("Bad data")
 
     def _log(self, msg):
         logger.log(msg, ["client", str(self._port)])
+
+    def sendToArduino(self, data):
+        self.arduino.write(ks.ASCII_DATA_REQUEST_SEND)
+        ack = self.arduino.read()
+        if ack == ks.ASCII_ACK:
+            #self.arduino.write(len(data))
+            self.arduino.write(data)
+            self._log("Data written to arduino")
+        else:
+            self._log("Bad ACK from arduino")
+        pass
 
 if __name__ == "__main__":
     Client().main()

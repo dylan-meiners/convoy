@@ -19,24 +19,28 @@ class Flow : public Mode {
         Flow(Vehicle::Direction direction = Vehicle::Direction::kForward) {
 
             m_dir = direction;
+            dataLength = K_MODE_DATA_LENGTH_FLOW;
+            data = new uint8_t[dataLength];
+            m_flowLength = K_MODE_FLOW_LENGTH;
+            m_flowPercentPerSecond = K_MODE_FLOW_PERCENT_PER_SECOND;
+            m_color = CHSV(
+                K_MODE_FLOW_COLOR_HSV_H,
+                K_MODE_FLOW_COLOR_HSV_S,
+                K_MODE_FLOW_COLOR_HSV_V
+            );
             ResetHead();
         }
 
-        bool step() {
+        bool _step() {
 
             RandomFadeToBlack();
 
-            for (int i = 0; i < K_MODE_FLOW_LENGTH; i++) {
+            for (int i = 0; i < m_flowLength; i++) {
 
                 if (m_head + i < Vehicle::GetInstance().GetTotal()) {
                 
                     Location* l = Vehicle::GetInstance().GetFullLocation(m_head + i);
-                    Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(
-                        K_MODE_FLOW_COLOR_HSV_H,
-                        K_MODE_FLOW_COLOR_HSV_S,
-                        K_MODE_FLOW_COLOR_HSV_V
-                    );
-                    delete l;
+                    Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = m_color;
                 }
             }
 
@@ -58,7 +62,6 @@ class Flow : public Mode {
 
                 Location* l = Vehicle::GetInstance().GetFullLocation(i);
                 uint8_t* old = &Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led].v;
-                delete l;
                 long rand = random(10);
                 if (rand >= 5) {
 
@@ -68,6 +71,20 @@ class Flow : public Mode {
         }
 
     private:
+        int m_flowLength;
+        double m_flowPercentPerSecond;
+        CHSV m_color;
+
+        void _parse() {
+
+            m_flowLength = data[0];
+            m_flowPercentPerSecond = data[1] / 255.0;
+            m_color = CHSV(
+                data[2],
+                data[3],
+                data[4]
+            );
+        }
 
         void ResetHead() {
 

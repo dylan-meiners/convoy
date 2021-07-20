@@ -19,6 +19,7 @@ class Vehicle {
 
             m_locked = false;
             m_totalLEDs = 0;
+            m_location = new Location;
         }
 
         static Vehicle& GetInstance() {
@@ -225,14 +226,13 @@ class Vehicle {
         Location* GetFullLocation(int index) {
 
             if (index < 0 || index >= m_totalLEDs) return nullptr;
-            
-            Location* toReturn = new Location;
-            int runningIndex = 0;
-            for (toReturn->strip = 0; toReturn->strip < m_strips->size(); toReturn->strip++) {
-                if (runningIndex + (*m_strips)[toReturn->strip]->GetNumLEDs() > index) {
 
-                    toReturn->led = index - runningIndex;
-                    return toReturn;
+            int runningIndex = 0;
+            for (m_location->strip = 0; m_location->strip < m_strips->size(); m_location->strip++) {
+                if (runningIndex + (*m_strips)[m_location->strip]->GetNumLEDs() > index) {
+
+                    m_location->led = index - runningIndex;
+                    return m_location;
                 }
             }
             return nullptr;
@@ -271,6 +271,7 @@ class Vehicle {
         bool m_locked;
         int m_totalLEDs;
         std::vector<Strip*>* m_strips;
+        Location* m_location;
 };
 
 #endif

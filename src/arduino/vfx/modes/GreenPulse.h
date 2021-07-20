@@ -13,9 +13,11 @@ class GreenPulse : public Mode {
 
             m_timer = new Timer;
             m_status = kFirstOn;
+            dataLength = K_MODE_DATA_LENGTH_GREEN_PULSE;
+            data = nullptr;
         }
 
-        bool step() {
+        bool _step() {
             
             switch (m_status) {
 
@@ -73,6 +75,9 @@ class GreenPulse : public Mode {
         }
 
     private:
+
+        void _parse() {}
+
         void Set(bool on = true) {
 
             Vehicle::GetInstance().SetAllHSV(K_COLOR_HSV_H_GREEN, K_COLOR_HSV_S_GREEN, on ? K_COLOR_HSV_V_GREEN : 0);

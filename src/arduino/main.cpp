@@ -33,11 +33,14 @@ enum E_Mode {
 
 E_Mode activeMode, oldMode;
 
+void processSerial();
 void switchMode(E_Mode, bool force = false);
 void playQuickMode(E_Mode);
 void ClearSerial();
 
 void setup() {
+
+    Serial.begin(115200);
 
     randomSeed(analogRead(0));
     
@@ -59,7 +62,42 @@ void setup() {
     FastLED.setBrightness(255);
 }
 
+void processSerial() {
+
+    static uint8_t* data = new uint8_t[256];
+
+    int avail = Serial.available();
+    if (avail > 0) {
+
+        if (avail > 1) {
+
+            // log("Data request check has more than one byte available (%d); reading first available and discarding the rest", avail, Logger::LogLevel::Info)
+        }
+        if (Serial.read() == INCOMING_DATA_REQUEST) {
+
+            Serial.write(ACK);
+            int mode = Serial.read();
+            // int toRead = Serial.read();
+            int numRecvd = Serial.readBytes(data, modes[mode]->dataLength);
+            if (numRecvd != modes[mode]->dataLength) {
+
+                // log("Did not receive all data; %d attempted --> %d actual", toRead, numRecvd, Logger::LogLevel::Error)
+            }
+            else {
+
+                // TODO: This could fail miserably in so many ways and cause absolute death to the system, but it's ok
+                if (modes[mode]->dataLength > 0) {
+                    
+                    memcpy(modes[mode]->data, data, modes[mode]->dataLength);
+                }
+            }
+        }
+    }
+}
+
 void loop() {
+
+    processSerial();
 
     if(modes[activeMode]->step()) {
 
