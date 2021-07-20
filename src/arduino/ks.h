@@ -14,6 +14,10 @@ const int K_NUM_LEDS_STRIP_BACK     = 45;
 const int INCOMING_DATA_REQUEST = 1;
 const int ACK                   = 6;
 
+const uint8_t K_COLOR_HSV_H_OFF     = 0;
+const uint8_t K_COLOR_HSV_S_OFF     = 0;
+const uint8_t K_COLOR_HSV_V_OFF     = 0;
+
 const uint8_t K_COLOR_HSV_H_GREEN   = 85;
 const uint8_t K_COLOR_HSV_S_GREEN   = 255;
 const uint8_t K_COLOR_HSV_V_GREEN   = 255;

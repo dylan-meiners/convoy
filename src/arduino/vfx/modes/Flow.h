@@ -28,6 +28,8 @@ class Flow : public Mode {
                 K_MODE_FLOW_COLOR_HSV_S,
                 K_MODE_FLOW_COLOR_HSV_V
             );
+            m_fade = new uint8_t[Vehicle::GetInstance().GetTotal()];
+            memset(m_fade, 0, Vehicle::GetInstance().GetTotal());
             ResetHead();
         }
 
@@ -42,6 +44,7 @@ class Flow : public Mode {
                     Location* l = Vehicle::GetInstance().GetFullLocation(m_head + i);
                     Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = m_color;
                 }
+                m_fade[m_head] = 15;//random(15) + 15;
             }
 
             if (++m_head >= Vehicle::GetInstance().GetTotal()) {
@@ -53,6 +56,7 @@ class Flow : public Mode {
 
         void reset() {
 
+            memset(m_fade, 0, Vehicle::GetInstance().GetTotal());
             ResetHead();
         }
 
@@ -60,12 +64,19 @@ class Flow : public Mode {
 
             for (int i = 0; i < Vehicle::GetInstance().GetTotal(); i++) {
 
-                Location* l = Vehicle::GetInstance().GetFullLocation(i);
-                uint8_t* old = &Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led].v;
-                long rand = random(10);
-                if (rand >= 5) {
+                if (m_fade[i] > 0) {
+                
+                    Location* l = Vehicle::GetInstance().GetFullLocation(i);
+                    uint8_t* v = &Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led].v;
+                    if (*v < m_fade[i]) {
 
-                    *old -= *old >= 15 ? 15 : *old;
+                        *v = 0;
+                        m_fade[i] = 0;
+                    }
+                    else {
+                        
+                        *v -= m_fade[i];
+                    }
                 }
             }
         }
@@ -93,6 +104,8 @@ class Flow : public Mode {
 
         Vehicle::Direction m_dir;
         int m_head;
+
+        uint8_t* m_fade;
 
 };
 
