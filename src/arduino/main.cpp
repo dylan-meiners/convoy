@@ -40,7 +40,9 @@ void ClearSerial();
 
 void setup() {
 
-    Serial.begin(115200);
+    Serial.begin(9600);
+    Serial.setTimeout(1000);
+    ClearSerial();
 
     randomSeed(analogRead(0));
     
@@ -53,48 +55,12 @@ void setup() {
     // strips.push_back(stripBack);
     Vehicle::GetInstance().AddConfiguration(&strips);
 
-    Serial.begin(115200);
-
     switchMode(kFlow, true);
     playQuickMode(kGreenPulse);
 
     FastLED.clear();
     FastLED.setBrightness(255);
-}
-
-void processSerial() {
-
-    static uint8_t* data = new uint8_t[256];
-
-    int avail = Serial.available();
-    if (avail > 0) {
-
-        if (avail > 1) {
-
-            // log("Data request check has more than one byte available (%d); reading first available and discarding the rest", avail, Logger::LogLevel::Info)
-        }
-        if (Serial.read() == INCOMING_DATA_REQUEST) {
-
-            Serial.write(ACK);
-            int mode = Serial.read();
-            // int toRead = Serial.read();
-            int numRecvd = Serial.readBytes(data, modes[mode]->dataLength);
-            if (numRecvd != modes[mode]->dataLength) {
-
-                // log("Did not receive all data; %d attempted --> %d actual", toRead, numRecvd, Logger::LogLevel::Error)
-            }
-            else {
-
-                // TODO: This could fail miserably in so many ways and cause absolute death to the system, but it's ok
-                if (modes[mode]->dataLength > 0) {
-                    
-                    memcpy(modes[mode]->data, data, modes[mode]->dataLength);
-                    modes[mode]->parse();
-                }
-            }
-            switchMode((E_Mode)mode);
-        }
-    }
+    FastLED.show();
 }
 
 void loop() {
@@ -111,6 +77,46 @@ void loop() {
 
     Vehicle::GetInstance().MoveHSVToRGB();
     FastLED.show();
+}
+
+void processSerial() {
+
+    static uint8_t* data = new uint8_t[256];
+    static uint8_t* tmp = new uint8_t;
+
+    int avail = Serial.available();
+    if (avail > 0) {
+
+        if (avail > 1) {
+
+            // TODO: log("Data request check has more than one byte available (%d); reading first available and discarding the rest", avail, Logger::LogLevel::Info)    
+        }
+        if (Serial.read() == INCOMING_DATA_REQUEST) {
+            
+            Serial.write(ACK);
+            int numRecvd = Serial.readBytes(tmp, 1);
+            if (numRecvd == 1) {
+
+                int mode = *tmp;
+                numRecvd = Serial.readBytes(data, modes[mode]->dataLength);
+                if (numRecvd != modes[mode]->dataLength) {
+
+                    // TODO: log("Did not receive all data; %d attempted --> %d actual", toRead, numRecvd, Logger::LogLevel::Error)
+                }
+                else {
+
+                    // TODO: This could fail miserably in so many ways and cause absolute death to the system, but it's ok
+                    if (modes[mode]->dataLength > 0) {
+                        
+                        memcpy(modes[mode]->data, data, modes[mode]->dataLength);
+                        modes[mode]->parse();
+                    }
+                }
+                switchMode((E_Mode)mode);
+                ClearSerial();
+            }
+        }
+    }
 }
 
 void switchMode(E_Mode modeToSwtichTo, bool force = false) {

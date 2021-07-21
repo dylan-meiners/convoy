@@ -4,3 +4,4 @@ convoy
 venv
 *.elf
 *.hex
+*.code-workspace

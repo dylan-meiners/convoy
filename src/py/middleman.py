@@ -26,6 +26,7 @@ class Middleman:
                         client.sendall(ks.SAMPLE_256_BYTES)
                     else:
                         self._log("Bad ack")
+                    time.sleep(5)
 
     def _log(self, msg):
         logger.log(msg, ["middleman", str(self._port)])
