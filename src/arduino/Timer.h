@@ -44,8 +44,6 @@ class Timer {
             long now = millis();
             if (now - m_time >= m_interval) {
 
-                // delay(250);
-                // digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
                 m_time = now;
                 return true;
             }

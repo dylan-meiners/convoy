@@ -73,11 +73,10 @@ class GreenPulse : public Mode {
             m_status = kFirstOn;
             m_timer->Restart();
         }
-
-    private:
-
+        
         void parse() {}
 
+    private:
         void Set(bool on = true) {
 
             Vehicle::GetInstance().SetAllHSV(K_COLOR_HSV_H_GREEN, K_COLOR_HSV_S_GREEN, on ? K_COLOR_HSV_V_GREEN : 0);

@@ -40,20 +40,38 @@ class Flow : public Mode {
             RandomFadeToBlack();
 
             if (m_timer->RunInterval()) {
-                
-                for (int i = 0; i < m_flowLength; i++) {
 
-                    if (m_head + i < Vehicle::GetInstance().GetTotal()) {
-                    
+                if (m_dir == Vehicle::Direction::kForward) {
+                
+                    for (int i = 0; i < m_flowLength; i++) {
+                        
                         Location* l = Vehicle::GetInstance().GetFullLocation(m_head + i);
                         Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = m_color;
+                        m_fade[m_head] = random(8) + 1;
                     }
-                    m_fade[m_head] = random(8) + 1;
+
+                    // If we just hit the last led
+                    if (++m_head + m_flowLength - 1 >= Vehicle::GetInstance().GetTotal()) {
+
+                        m_dir = Vehicle::Direction::kReversed;
+                        m_head = Vehicle::GetInstance().GetTotal() - 2;
+                    }
                 }
+                else {
 
-                if (++m_head >= Vehicle::GetInstance().GetTotal()) {
+                    for (int i = 0; i < m_flowLength; i++) {
+                        
+                        Location* l = Vehicle::GetInstance().GetFullLocation(m_head - i);
+                        Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = m_color;
+                        m_fade[m_head] = random(8) + 1;
+                    }
 
-                    m_head = 0;
+                    // If we just hit the last led
+                    if (--m_head - (m_flowLength - 1) < 0) {
+
+                        m_dir = Vehicle::Direction::kForward;
+                        m_head = 1;
+                    }
                 }
             }
             return false;

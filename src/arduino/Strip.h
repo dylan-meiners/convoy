@@ -2,6 +2,7 @@
 #define STRIP_H
 
 #include <FastLED.h>
+#include "ks.h"
 
 class Strip {
 
@@ -53,6 +54,20 @@ class Strip {
 
                 leds[i] = CHSV(h, s, v);
             }
+        }
+
+        void Clear() {
+
+            SetAllHSV(
+                K_COLOR_HSV_H_OFF,
+                K_COLOR_HSV_S_OFF,
+                K_COLOR_HSV_V_OFF
+            );
+        }
+
+        Type GetType() {
+
+            return m_type;
         }
 
         CHSV* leds;
