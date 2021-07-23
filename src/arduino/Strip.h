@@ -16,20 +16,22 @@ class Strip {
             kRight
         };
 
-        Strip(const int pinToSet, const int numLEDsToSet, Type typeToSet) {
+        Strip(const int pinToSet, const int numLEDsToSet, Type typeToSet, const int reversed) {
 
             m_pin = pinToSet;
             m_numLEDs = numLEDsToSet;
             m_type = typeToSet;
             m_rgb = new CRGB[m_numLEDs];
             leds = new CHSV[m_numLEDs];
+            tmp = new CHSV[m_numLEDs];
+            m_reversed = reversed;
         }
 
         void MoveHSVToRGB() {
 
             for (int i = 0; i < m_numLEDs; i++) {
 
-                m_rgb[i] = leds[i];
+                m_rgb[i] = leds[m_reversed ? m_numLEDs - 1 - i : i];
             }
         }
 
@@ -46,6 +48,11 @@ class Strip {
         CRGB* GetRGBArray() {
 
             return m_rgb;
+        }
+
+        bool IsReversed() {
+
+            return m_reversed;
         }
 
         void SetAllHSV(uint8_t h, uint8_t s, uint8_t v) {
@@ -71,12 +78,14 @@ class Strip {
         }
 
         CHSV* leds;
+        CHSV* tmp;
 
     private:
         int m_pin;
         int m_numLEDs;
         Type m_type;
         CRGB* m_rgb;
+        bool m_reversed;
 };
 
 #endif

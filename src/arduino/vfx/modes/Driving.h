@@ -21,6 +21,8 @@ class Driving : public Mode {
             m_rightOffHits = 0;
             m_runningOffHits = 0;
             m_flashersTimer = new Timer;
+            m_leftTimer = new Timer;
+            m_rightTimer = new Timer;
         }
 
         bool step() {
@@ -179,18 +181,6 @@ class Driving : public Mode {
                 }
             }
 
-            if (brake) {
-
-                for (int i = 0; i < backStrips->size(); i++) {
-
-                    (*backStrips)[i]->SetAllHSV(
-                        K_COLOR_HSV_H_RED,
-                        K_COLOR_HSV_S_RED,
-                        K_COLOR_HSV_V_RED
-                    );
-                }
-            }
-
             if (right && left) {
 
                 ModeManager::GetInstance().GetMode(ModeManager::Mode_t::kWarning)->step();
@@ -204,6 +194,8 @@ class Driving : public Mode {
             else {
                 
                 if (left) {
+
+                    m_leftTimer->Restart();
 
                     // If left blinker turned on but was off
                     if (!m_leftWasOn) {
@@ -242,20 +234,19 @@ class Driving : public Mode {
                 // If the left blinker is off, clear the left side of the strip
                 else {
 
-                    if (!brake) {
-                    
-                        for (int i = backStrip->GetNumLEDs() / 2 - 1; i >= 0; i--) {
+                    for (int i = backStrip->GetNumLEDs() / 2 - 1; i >= 0; i--) {
 
-                            backStrip->leds[i] = CHSV(
-                                K_COLOR_HSV_H_OFF,
-                                K_COLOR_HSV_S_OFF,
-                                K_COLOR_HSV_V_OFF
-                            );
-                        }
+                        backStrip->leds[i] = CHSV(
+                            K_COLOR_HSV_H_OFF,
+                            K_COLOR_HSV_S_OFF,
+                            K_COLOR_HSV_V_OFF
+                        );
                     }
                 }
 
                 if (right) {
+
+                    m_rightTimer->Restart();
 
                     // If right blinker turned on but was offf
                     if (!m_rightWasOn) {
@@ -293,17 +284,14 @@ class Driving : public Mode {
                 }
                 // If the right blinker is off, clear the right side of the strip
                 else {
-
-                    if (!brake) {
                     
-                        for (int i = backStrip->GetNumLEDs() / 2; i < backStrip->GetNumLEDs(); i++) {
+                    for (int i = backStrip->GetNumLEDs() / 2; i < backStrip->GetNumLEDs(); i++) {
 
-                            backStrip->leds[i] = CHSV(
-                                K_COLOR_HSV_H_OFF,
-                                K_COLOR_HSV_S_OFF,
-                                K_COLOR_HSV_V_OFF
-                            );
-                        }
+                        backStrip->leds[i] = CHSV(
+                            K_COLOR_HSV_H_OFF,
+                            K_COLOR_HSV_S_OFF,
+                            K_COLOR_HSV_V_OFF
+                        );
                     }
                 }
 
@@ -312,16 +300,39 @@ class Driving : public Mode {
                 m_runningWasOn = running;
             }
             
+            if (brake) {
+
+                if (!left && m_leftTimer->WhenElapsed((int)K_MS_PER_BLINK + K_MS_FLASHERS_TIMEOUT)) {
+
+                    for (int i = 0; i < backStrip->GetNumLEDs() / 2; i++) {
+
+                        backStrip->leds[i] = CHSV(
+                            K_COLOR_HSV_H_RED,
+                            K_COLOR_HSV_S_RED,
+                            K_COLOR_HSV_V_RED
+                        );
+                    }
+                }
+                if (!right && m_rightTimer->WhenElapsed((int)K_MS_PER_BLINK + K_MS_FLASHERS_TIMEOUT)) {
+
+                    for (int i = backStrip->GetNumLEDs() / 2; i < backStrip->GetNumLEDs(); i++) {
+
+                        backStrip->leds[i] = CHSV(
+                            K_COLOR_HSV_H_RED,
+                            K_COLOR_HSV_S_RED,
+                            K_COLOR_HSV_V_RED
+                        );
+                    }
+                }
+            }
+
             if (reverse) {
 
-                for (int i = 0; i < backStrips->size(); i++) {
-
-                    (*backStrips)[i]->SetAllHSV(
-                        K_COLOR_HSV_H_WHITE,
-                        K_COLOR_HSV_S_WHITE,
-                        K_COLOR_HSV_V_WHITE
-                    );
-                }
+                Vehicle::GetInstance().SetAllHSV(
+                    K_COLOR_HSV_H_WHITE,
+                    K_COLOR_HSV_S_WHITE,
+                    K_COLOR_HSV_V_WHITE
+                );
             }
             return false;
         }
@@ -339,6 +350,8 @@ class Driving : public Mode {
         int m_runningOffHits;
         int m_ramp;
         Timer* m_flashersTimer;
+        Timer* m_leftTimer;
+        Timer* m_rightTimer;
 };
 
 #endif

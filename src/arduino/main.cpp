@@ -14,10 +14,10 @@
 #include "vfx/modes/Driving.h"
 #include "vfx/modes/Warning.h"
 
-// Strip* stripFront   = new Strip(K_PIN_STRIP_FRONT,  K_NUM_LEDS_STRIP_FRONT, Strip::Type::kFront);
-Strip* stripRight   = new Strip(K_PIN_STRIP_RIGHT,  K_NUM_LEDS_STRIP_RIGHT, Strip::Type::kRight);
-Strip* stripLeft    = new Strip(K_PIN_STRIP_LEFT,   K_NUM_LEDS_STRIP_LEFT,  Strip::Type::kLeft);
-Strip* stripBack    = new Strip(K_PIN_STRIP_BACK,   K_NUM_LEDS_STRIP_BACK,  Strip::Type::kBack);
+// Strip* stripFront   = new Strip(K_PIN_STRIP_FRONT,  K_NUM_LEDS_STRIP_FRONT, Strip::Type::kFront, false);
+Strip* stripRight   = new Strip(K_PIN_STRIP_RIGHT,  K_NUM_LEDS_STRIP_RIGHT, Strip::Type::kRight, false);
+Strip* stripLeft    = new Strip(K_PIN_STRIP_LEFT,   K_NUM_LEDS_STRIP_LEFT,  Strip::Type::kLeft, true);
+Strip* stripBack    = new Strip(K_PIN_STRIP_BACK,   K_NUM_LEDS_STRIP_BACK,  Strip::Type::kBack, true);
 std::vector<Strip*> strips;
 
 void processSerial();
@@ -72,7 +72,7 @@ void loop() {
     // processSerial();
 
     ModeManager::GetInstance().Step();
-
+    // Vehicle::GetInstance().ApplyReverse();
     Vehicle::GetInstance().MoveHSVToRGB();
     FastLED.show();
     // delay(2);

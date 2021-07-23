@@ -281,6 +281,25 @@ class Vehicle {
             }
         }
 
+        void ApplyReverse() {
+
+            for (int i = 0; i < m_strips->size(); i++) {
+
+                Strip* strip = (*m_strips)[i];
+                if (strip->IsReversed()) {
+
+                    for (int i = 0; i < strip->GetNumLEDs(); i++) {
+
+                        strip->tmp[i] = strip->leds[strip->GetNumLEDs() - 1 - i];
+                        for (int k = 0; k < strip->GetNumLEDs(); k++) {
+
+                            strip->leds[i] = strip->tmp[i];
+                        }
+                    }
+                }
+            }
+        }
+
         enum Direction {
             kForward,
             kReversed
