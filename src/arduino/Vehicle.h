@@ -20,6 +20,10 @@ class Vehicle {
             m_locked = false;
             m_totalLEDs = 0;
             m_location = new Location;
+            for (int i = 0; i < K_NUM_STRIP_TYPES; i++) {
+
+                m_stripsSorted[i] = new std::vector<Strip*>;
+            }
         }
 
         static Vehicle& GetInstance() {
@@ -35,6 +39,8 @@ class Vehicle {
 
             m_strips = strips;
             for (int i = 0; i < m_strips->size(); i++) {
+
+                m_stripsSorted[(*m_strips)[i]->GetType()]->push_back((*m_strips)[i]);
 
                 m_totalLEDs += (*m_strips)[i]->GetNumLEDs();
                 switch ((*m_strips)[i]->GetPin()) {
@@ -210,6 +216,11 @@ class Vehicle {
             return (*m_strips);
         }
 
+        std::vector<Strip*>* GetStripsByType(Strip::Type type) {
+
+            return m_stripsSorted[type];
+        }
+
         int GetTotal() {
 
             return m_totalLEDs;
@@ -284,6 +295,7 @@ class Vehicle {
         bool m_locked;
         int m_totalLEDs;
         std::vector<Strip*>* m_strips;
+        std::vector<std::vector<Strip*>*> m_stripsSorted;
         Location* m_location;
 };
 

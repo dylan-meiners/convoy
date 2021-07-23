@@ -6,37 +6,21 @@
 #include "Vehicle.h"
 #include "Strip.h"
 #include "ks.h"
+#include "vfx/ModeManager.h"
 #include "vfx/modes/TestMode.h"
 #include "vfx/modes/RainbowWave.h"
 #include "vfx/modes/GreenPulse.h"
 #include "vfx/modes/Flow.h"
+#include "vfx/modes/Driving.h"
 #include "vfx/modes/Warning.h"
 
 // Strip* stripFront   = new Strip(K_PIN_STRIP_FRONT,  K_NUM_LEDS_STRIP_FRONT, Strip::Type::kFront);
-// Strip* stripRight   = new Strip(K_PIN_STRIP_RIGHT,  K_NUM_LEDS_STRIP_RIGHT, Strip::Type::kRight);
+Strip* stripRight   = new Strip(K_PIN_STRIP_RIGHT,  K_NUM_LEDS_STRIP_RIGHT, Strip::Type::kRight);
 Strip* stripLeft    = new Strip(K_PIN_STRIP_LEFT,   K_NUM_LEDS_STRIP_LEFT,  Strip::Type::kLeft);
 Strip* stripBack    = new Strip(K_PIN_STRIP_BACK,   K_NUM_LEDS_STRIP_BACK,  Strip::Type::kBack);
 std::vector<Strip*> strips;
 
-Mode* modes[] = {
-    new TestMode(),
-    new RainbowWave(),
-    new GreenPulse(),
-    new Flow()
-};
-
-enum E_Mode {
-    kTestMode,
-    kRainbowWave,
-    kGreenPulse,
-    kFlow
-};
-
-E_Mode activeMode, oldMode;
-
 void processSerial();
-void switchMode(E_Mode, bool force = false);
-void playQuickMode(E_Mode);
 void ClearSerial();
 
 void setup() {
@@ -50,17 +34,33 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
 
+    pinMode(K_PIN_STRIP_FRONT, OUTPUT);
+    pinMode(K_PIN_STRIP_RIGHT, OUTPUT);
     pinMode(K_PIN_STRIP_BACK, OUTPUT);
     pinMode(K_PIN_STRIP_LEFT, OUTPUT);
 
+    pinMode(K_PIN_LIGHT_BRAKE, INPUT);
+    pinMode(K_PIN_RUNNING_LIGHTS, INPUT);
+    pinMode(K_PIN_LIGHT_BLINKER_LEFT, INPUT);
+    pinMode(K_PIN_LIGHT_BLINKER_RIGHT, INPUT);
+    pinMode(K_PIN_LIGHT_REVERSE, INPUT);
+
     // strips.push_back(stripFront);
-    // strips.push_back(stripRight);
+    strips.push_back(stripRight);
     strips.push_back(stripLeft);
     strips.push_back(stripBack);
     Vehicle::GetInstance().AddConfiguration(&strips);
 
-    switchMode(kFlow, true);
-    playQuickMode(kGreenPulse);
+    std::vector<Mode*> modes;
+    modes.push_back(new TestMode());
+    modes.push_back(new RainbowWave());
+    modes.push_back(new GreenPulse());
+    modes.push_back(new Flow());
+    modes.push_back(new Driving());
+    modes.push_back(new Warning());
+    ModeManager::GetInstance().AddModes(modes);
+    ModeManager::GetInstance().SwitchMode(ModeManager::Mode_t::kDriving, true);
+    ModeManager::GetInstance().PlayQuickMode(ModeManager::Mode_t::kGreenPulse);
 
     FastLED.clear();
     FastLED.setBrightness(255);
@@ -71,16 +71,14 @@ void loop() {
 
     // processSerial();
 
-    if(modes[activeMode]->step()) {
-
-        // Do not use switchMode(E_Mode) because it will reset the mode. If
-        // step returns true, then it is returning from a quick effect so,
-        // strictly resume the previous mode.
-        activeMode = oldMode;
-    }
+    ModeManager::GetInstance().Step();
 
     Vehicle::GetInstance().MoveHSVToRGB();
     FastLED.show();
+    // delay(2);
+
+    // Serial.println(digitalRead(K_PIN_LIGHT_BLINKER_LEFT));
+    // delay(10);
 }
 
 void processSerial() {
@@ -102,40 +100,26 @@ void processSerial() {
             if (numRecvd == 1) {
 
                 int mode = *tmp;
-                numRecvd = Serial.readBytes(data, modes[mode]->dataLength);
-                if (numRecvd != modes[mode]->dataLength) {
+                int dataLength = ModeManager::GetInstance().GetMode((ModeManager::Mode_t)mode)->dataLength;
+                numRecvd = Serial.readBytes(data, dataLength);
+                if (numRecvd != dataLength) {
 
                     // TODO: log("Did not receive all data; %d attempted --> %d actual", toRead, numRecvd, Logger::LogLevel::Error)
                 }
                 else {
 
                     // TODO: This could fail miserably in so many ways and cause absolute death to the system, but it's ok
-                    if (modes[mode]->dataLength > 0) {
+                    if (dataLength > 0) {
                         
-                        memcpy(modes[mode]->data, data, modes[mode]->dataLength);
-                        modes[mode]->parse();
+                        memcpy(ModeManager::GetInstance().GetMode((ModeManager::Mode_t)mode)->data, data, dataLength);
+                        ModeManager::GetInstance().GetMode((ModeManager::Mode_t)mode)->parse();
                     }
                 }
-                switchMode((E_Mode)mode);
+                ModeManager::GetInstance().SwitchMode((ModeManager::Mode_t)mode);
                 ClearSerial();
             }
         }
     }
-}
-
-void switchMode(E_Mode modeToSwtichTo, bool force = false) {
-
-    if (force || activeMode != modeToSwtichTo) {
-
-        activeMode = modeToSwtichTo;
-        modes[activeMode]->reset();
-    }
-}
-
-void playQuickMode(E_Mode modeToPlay) {
-
-    oldMode = activeMode;
-    switchMode(modeToPlay);
 }
 
 void ClearSerial() {

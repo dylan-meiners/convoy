@@ -15,9 +15,13 @@ class Warning : public Mode {
             m_color = kFirst;
             m_timer = new Timer;
             m_timer->SetInterval(333);
+            m_strobeTimer = new Timer;
+            m_strobeTimer->SetInterval(K_MODE_WARNING_STROBE_INTERBAL_MS);
         }
 
         bool step() {
+
+            bool strobe = m_strobeTimer->RunInterval();
 
             if (m_timer->RunInterval()) {
 
@@ -28,7 +32,7 @@ class Warning : public Mode {
                 }
                 else {
 
-                    m_side = kRight;
+                    m_side = kLeft;
                 }
             }
 
@@ -42,55 +46,64 @@ class Warning : public Mode {
                     for (int k = 0; k < K_MODE_WARNING_BATCH_SIZE_HALF; k++) {
                     
                         tempStrip->leds[j * K_MODE_WARNING_BATCH_SIZE_HALF + k] = 
-                            // If current batch is on the left
-                            j % 2 == 0 || j == 0 ?
-                                (
-                                    // If left is active
-                                    m_side == kLeft ?
+                            strobe ?
+                                (    
+                                // If current batch is on the left
+                                    j % 2 == 0 || j == 0 ?
                                         (
-                                            m_color == kFirst ?
-                                                CHSV(
-                                                    K_COLOR_HSV_H_WHITE,
-                                                    K_COLOR_HSV_S_WHITE,
-                                                    K_COLOR_HSV_V_WHITE
+                                            // If left is active
+                                            m_side == kLeft ?
+                                                (
+                                                    m_color == kFirst ?
+                                                        CHSV(
+                                                            K_COLOR_HSV_H_WHITE,
+                                                            K_COLOR_HSV_S_WHITE,
+                                                            K_COLOR_HSV_V_WHITE
+                                                        )
+                                                    :
+                                                        CHSV(
+                                                            K_COLOR_HSV_H_AMBER,
+                                                            K_COLOR_HSV_S_AMBER,
+                                                            K_COLOR_HSV_V_AMBER
+                                                        )
                                                 )
                                             :
                                                 CHSV(
-                                                    K_COLOR_HSV_H_GREEN,
-                                                    K_COLOR_HSV_S_GREEN,
-                                                    K_COLOR_HSV_V_GREEN
+                                                    K_COLOR_HSV_H_OFF,
+                                                    K_COLOR_HSV_S_OFF,
+                                                    K_COLOR_HSV_V_OFF
                                                 )
                                         )
                                     :
-                                        CHSV(
-                                            K_COLOR_HSV_H_OFF,
-                                            K_COLOR_HSV_S_OFF,
-                                            K_COLOR_HSV_V_OFF
+                                        (
+                                            m_side == kRight ?
+                                                (
+                                                    m_color == kFirst ?
+                                                        CHSV(
+                                                            K_COLOR_HSV_H_WHITE,
+                                                            K_COLOR_HSV_S_WHITE,
+                                                            K_COLOR_HSV_V_WHITE
+                                                        )
+                                                    :
+                                                        CHSV(
+                                                            K_COLOR_HSV_H_AMBER,
+                                                            K_COLOR_HSV_S_AMBER,
+                                                            K_COLOR_HSV_V_AMBER
+                                                        )
+                                                )
+                                            :
+                                                CHSV(
+                                                    K_COLOR_HSV_H_OFF,
+                                                    K_COLOR_HSV_S_OFF,
+                                                    K_COLOR_HSV_V_OFF
+                                                )
                                         )
                                 )
                             :
-                                (
-                                    m_side == kRight ?
-                                        (
-                                            m_color == kFirst ?
-                                                CHSV(
-                                                    K_COLOR_HSV_H_WHITE,
-                                                    K_COLOR_HSV_S_WHITE,
-                                                    K_COLOR_HSV_V_WHITE
-                                                )
-                                            :
-                                                CHSV(
-                                                    K_COLOR_HSV_H_GREEN,
-                                                    K_COLOR_HSV_S_GREEN,
-                                                    K_COLOR_HSV_V_GREEN
-                                                )
-                                        )
-                                    :
-                                        CHSV(
-                                            K_COLOR_HSV_H_OFF,
-                                            K_COLOR_HSV_S_OFF,
-                                            K_COLOR_HSV_V_OFF
-                                        )
+                                CHSV(
+                                    K_COLOR_HSV_H_OFF,
+                                    K_COLOR_HSV_S_OFF,
+                                    K_COLOR_HSV_V_OFF
                                 );
                     }
                 }
@@ -104,6 +117,7 @@ class Warning : public Mode {
             m_side = kRight;
             m_color = kFirst;
             m_timer->Restart();
+            m_strobeTimer->Restart();
         }
         void parse() {}
     
@@ -119,6 +133,7 @@ class Warning : public Mode {
         } m_color;
 
         Timer* m_timer;
+        Timer* m_strobeTimer;
 };
 
 #endif
