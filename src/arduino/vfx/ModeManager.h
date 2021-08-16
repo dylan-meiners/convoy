@@ -13,7 +13,9 @@ class ModeManager {
             kGreenPulse,
             kFlow,
             kDriving,
-            kWarning
+            kWarning,
+            kRainbowWaveUniform,
+            kFlowUniform
         };
 
         ModeManager() {

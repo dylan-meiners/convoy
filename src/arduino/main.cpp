@@ -6,6 +6,7 @@
 #include "Vehicle.h"
 #include "Strip.h"
 #include "ks.h"
+#include "Timer.h"
 #include "vfx/ModeManager.h"
 #include "vfx/modes/TestMode.h"
 #include "vfx/modes/RainbowWave.h"
@@ -13,12 +14,22 @@
 #include "vfx/modes/Flow.h"
 #include "vfx/modes/Driving.h"
 #include "vfx/modes/Warning.h"
+#include "vfx/modes/RainbowWaveUniform.h"
+#include "vfx/modes/FlowUniform.h"
 
 // Strip* stripFront   = new Strip(K_PIN_STRIP_FRONT,  K_NUM_LEDS_STRIP_FRONT, Strip::Type::kFront, false);
-Strip* stripRight   = new Strip(K_PIN_STRIP_RIGHT,  K_NUM_LEDS_STRIP_RIGHT, Strip::Type::kRight, false);
-Strip* stripLeft    = new Strip(K_PIN_STRIP_LEFT,   K_NUM_LEDS_STRIP_LEFT,  Strip::Type::kLeft, true);
-Strip* stripBack    = new Strip(K_PIN_STRIP_BACK,   K_NUM_LEDS_STRIP_BACK,  Strip::Type::kBack, true);
+// Strip* stripRight   = new Strip(K_PIN_STRIP_RIGHT,  K_NUM_LEDS_STRIP_RIGHT, Strip::Type::kRight, false);
+// Strip* stripLeft    = new Strip(K_PIN_STRIP_LEFT,   K_NUM_LEDS_STRIP_LEFT,  Strip::Type::kLeft, true);
+// Strip* stripBack    = new Strip(K_PIN_STRIP_BACK,   K_NUM_LEDS_STRIP_BACK,  Strip::Type::kBack, true);
+
+Strip* one          = new Strip(K_PIN_STRIP_ONE,    K_NUM_LEDS_STRIP_ONE,   Strip::Type::kNone, false);
+Strip* two          = new Strip(K_PIN_STRIP_TWO,    K_NUM_LEDS_STRIP_TWO,   Strip::Type::kNone, false);
+Strip* three        = new Strip(K_PIN_STRIP_THREE, K_NUM_LEDS_STRIP_THREE,  Strip::Type::kNone, false);
 std::vector<Strip*> strips;
+
+Timer* switcher = new Timer;
+std::vector<ModeManager::Mode_t> loopModes;
+std::vector<ModeManager::Mode_t>::iterator currentLoopMode;
 
 void processSerial();
 void ClearSerial();
@@ -34,10 +45,13 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
 
-    pinMode(K_PIN_STRIP_FRONT, OUTPUT);
-    pinMode(K_PIN_STRIP_RIGHT, OUTPUT);
-    pinMode(K_PIN_STRIP_BACK, OUTPUT);
-    pinMode(K_PIN_STRIP_LEFT, OUTPUT);
+    pinMode(K_PIN_STRIP_FRONT,  OUTPUT);
+    pinMode(K_PIN_STRIP_RIGHT,  OUTPUT);
+    pinMode(K_PIN_STRIP_BACK,   OUTPUT);
+    pinMode(K_PIN_STRIP_LEFT,   OUTPUT);
+    pinMode(K_PIN_STRIP_ONE,    OUTPUT);
+    pinMode(K_PIN_STRIP_TWO,    OUTPUT);
+    pinMode(K_PIN_STRIP_THREE,  OUTPUT);
 
     pinMode(K_PIN_LIGHT_BRAKE, INPUT);
     pinMode(K_PIN_RUNNING_LIGHTS, INPUT);
@@ -46,9 +60,9 @@ void setup() {
     pinMode(K_PIN_LIGHT_REVERSE, INPUT);
 
     // strips.push_back(stripFront);
-    strips.push_back(stripRight);
-    strips.push_back(stripLeft);
-    strips.push_back(stripBack);
+    strips.push_back(one);
+    strips.push_back(two);
+    strips.push_back(three);
     Vehicle::GetInstance().AddConfiguration(&strips);
 
     std::vector<Mode*> modes;
@@ -58,18 +72,35 @@ void setup() {
     modes.push_back(new Flow());
     modes.push_back(new Driving());
     modes.push_back(new Warning());
+    modes.push_back(new RainbowWaveUniform());
+    modes.push_back(new FlowUniform());
     ModeManager::GetInstance().AddModes(modes);
-    ModeManager::GetInstance().SwitchMode(ModeManager::Mode_t::kDriving, true);
-    ModeManager::GetInstance().PlayQuickMode(ModeManager::Mode_t::kGreenPulse);
+    ModeManager::GetInstance().SwitchMode(ModeManager::Mode_t::kRainbowWaveUniform, true);
+    // ModeManager::GetInstance().PlayQuickMode(ModeManager::Mode_t::kGreenPulse);
 
     FastLED.clear();
     FastLED.setBrightness(255);
     FastLED.show();
+
+    loopModes.push_back(ModeManager::Mode_t::kRainbowWaveUniform);
+    loopModes.push_back(ModeManager::Mode_t::kFlowUniform);
+    currentLoopMode = loopModes.begin();
+    switcher->SetInterval(5 * 60 * 1000);
+    switcher->Restart();
 }
 
 void loop() {
 
     // processSerial();
+
+    if (switcher->RunInterval()) {
+
+        if (++currentLoopMode == loopModes.end()) {
+
+            currentLoopMode = loopModes.begin();
+        }
+        ModeManager::GetInstance().SwitchMode(*currentLoopMode);
+    }
 
     ModeManager::GetInstance().Step();
     // Vehicle::GetInstance().ApplyReverse();

@@ -300,6 +300,14 @@ class Vehicle {
             }
         }
 
+        void UniformSet(int index, uint8_t h, uint8_t s, uint8_t v) {
+            for (int i = 0; i < m_strips->size(); i++) {
+                if (index <= (*m_strips)[i]->GetNumLEDs()) {
+                    (*m_strips)[i]->leds[index] = CHSV(h, s, v);
+                }
+            }
+        }
+
         enum Direction {
             kForward,
             kReversed

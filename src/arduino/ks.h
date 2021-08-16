@@ -12,10 +12,18 @@ const int K_PIN_STRIP_LEFT          = 8;
 const int K_PIN_STRIP_BACK          = 9;
 const int K_PIN_STRIP_RIGHT         = 10;
 
+const int K_PIN_STRIP_ONE           = 2;
+const int K_PIN_STRIP_TWO           = 3;
+const int K_PIN_STRIP_THREE         = 4;
+
 const int K_NUM_LEDS_STRIP_FRONT    = 0;
 const int K_NUM_LEDS_STRIP_RIGHT    = 146;
 const int K_NUM_LEDS_STRIP_LEFT     = 146;
 const int K_NUM_LEDS_STRIP_BACK     = 96;
+
+const int K_NUM_LEDS_STRIP_ONE      = 300;
+const int K_NUM_LEDS_STRIP_TWO      = 300;
+const int K_NUM_LEDS_STRIP_THREE    = 300;
 
 const int K_NUM_STRIP_TYPES         = 5;
 

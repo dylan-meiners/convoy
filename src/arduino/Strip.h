@@ -13,7 +13,8 @@ class Strip {
             kBack,
             kTop,
             kLeft,
-            kRight
+            kRight,
+            kNone
         };
 
         Strip(const int pinToSet, const int numLEDsToSet, Type typeToSet, const int reversed) {
