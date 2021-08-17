@@ -31,7 +31,7 @@ class FlowUniform : public Mode {
                 K_MODE_FLOW_COLOR_HSV_V
             );
             m_fade = new uint8_t[Vehicle::GetInstance().GetStrips()[0]->GetNumLEDs()];
-            memset(m_fade, 0, Vehicle::GetInstance().GetStrips()[0]->GetNumLEDs());
+            // memset(m_fade, 0, Vehicle::GetInstance().GetStrips()[0]->GetNumLEDs());
             ResetHead();
         }
 
@@ -77,7 +77,7 @@ class FlowUniform : public Mode {
 
         void reset() {
 
-            memset(m_fade, 0, Vehicle::GetInstance().GetStrips()[0]->GetNumLEDs());
+            // memset(m_fade, 0, Vehicle::GetInstance().GetStrips()[0]->GetNumLEDs());
             ResetHead();
             m_timer->SetInterval(m_speed);
             m_timer->Restart();

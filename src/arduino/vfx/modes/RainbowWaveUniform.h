@@ -27,13 +27,13 @@ class RainbowWaveUniform : public Mode {
                 for (int j = 0; j < current->GetNumLEDs(); j++) {
 
                     current->leds[j] = CHSV(
-                        fmod((j * 255.0 / (double)Vehicle::GetInstance().GetTotal()) + m_waveCounter * m_waveSpeedScalar, 255.0),
+                        fmod((j * 255.0 / (double)Vehicle::GetInstance().GetStrips()[0]->GetNumLEDs()) + m_waveCounter * m_waveSpeedScalar, 255.0),
                         255,
                         255
                     );
                 }
             }
-            m_waveCounter += (255.0 / (double)Vehicle::GetInstance().GetTotal()) * m_waveSpeedScalar;
+            m_waveCounter += (255.0 / (double)Vehicle::GetInstance().GetStrips()[0]->GetNumLEDs()) * m_waveSpeedScalar;
             return false;
         }
 

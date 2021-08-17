@@ -22,14 +22,15 @@
 // Strip* stripLeft    = new Strip(K_PIN_STRIP_LEFT,   K_NUM_LEDS_STRIP_LEFT,  Strip::Type::kLeft, true);
 // Strip* stripBack    = new Strip(K_PIN_STRIP_BACK,   K_NUM_LEDS_STRIP_BACK,  Strip::Type::kBack, true);
 
-Strip* one          = new Strip(K_PIN_STRIP_ONE,    K_NUM_LEDS_STRIP_ONE,   Strip::Type::kNone, false);
-Strip* two          = new Strip(K_PIN_STRIP_TWO,    K_NUM_LEDS_STRIP_TWO,   Strip::Type::kNone, false);
-Strip* three        = new Strip(K_PIN_STRIP_THREE, K_NUM_LEDS_STRIP_THREE,  Strip::Type::kNone, false);
+Strip* one          = new Strip(K_PIN_STRIP_ONE,    K_NUM_LEDS_STRIP_ONE,   Strip::Type::kFront, false);
+Strip* two          = new Strip(K_PIN_STRIP_TWO,    K_NUM_LEDS_STRIP_TWO,   Strip::Type::kFront, false);
+Strip* three        = new Strip(K_PIN_STRIP_THREE, K_NUM_LEDS_STRIP_THREE,  Strip::Type::kFront, false);
 std::vector<Strip*> strips;
 
-Timer* switcher = new Timer;
-std::vector<ModeManager::Mode_t> loopModes;
-std::vector<ModeManager::Mode_t>::iterator currentLoopMode;
+// Timer* switcher = new Timer;
+// std::vector<ModeManager::Mode_t> loopModes;
+// std::vector<ModeManager::Mode_t>::iterator currentLoopMode;
+Timer* testTimer = new Timer;
 
 void processSerial();
 void ClearSerial();
@@ -44,20 +45,16 @@ void setup() {
     
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
-
-    pinMode(K_PIN_STRIP_FRONT,  OUTPUT);
-    pinMode(K_PIN_STRIP_RIGHT,  OUTPUT);
-    pinMode(K_PIN_STRIP_BACK,   OUTPUT);
-    pinMode(K_PIN_STRIP_LEFT,   OUTPUT);
+    
     pinMode(K_PIN_STRIP_ONE,    OUTPUT);
     pinMode(K_PIN_STRIP_TWO,    OUTPUT);
     pinMode(K_PIN_STRIP_THREE,  OUTPUT);
 
-    pinMode(K_PIN_LIGHT_BRAKE, INPUT);
-    pinMode(K_PIN_RUNNING_LIGHTS, INPUT);
-    pinMode(K_PIN_LIGHT_BLINKER_LEFT, INPUT);
-    pinMode(K_PIN_LIGHT_BLINKER_RIGHT, INPUT);
-    pinMode(K_PIN_LIGHT_REVERSE, INPUT);
+    // pinMode(K_PIN_LIGHT_BRAKE, INPUT);
+    // pinMode(K_PIN_RUNNING_LIGHTS, INPUT);
+    // pinMode(K_PIN_LIGHT_BLINKER_LEFT, INPUT);
+    // pinMode(K_PIN_LIGHT_BLINKER_RIGHT, INPUT);
+    // pinMode(K_PIN_LIGHT_REVERSE, INPUT);
 
     // strips.push_back(stripFront);
     strips.push_back(one);
@@ -65,51 +62,57 @@ void setup() {
     strips.push_back(three);
     Vehicle::GetInstance().AddConfiguration(&strips);
 
-    std::vector<Mode*> modes;
-    modes.push_back(new TestMode());
-    modes.push_back(new RainbowWave());
-    modes.push_back(new GreenPulse());
-    modes.push_back(new Flow());
-    modes.push_back(new Driving());
-    modes.push_back(new Warning());
-    modes.push_back(new RainbowWaveUniform());
-    modes.push_back(new FlowUniform());
-    ModeManager::GetInstance().AddModes(modes);
-    ModeManager::GetInstance().SwitchMode(ModeManager::Mode_t::kRainbowWaveUniform, true);
+    // std::vector<Mode*> modes;
+    // modes.push_back(new TestMode());
+    // modes.push_back(new RainbowWave()); 
+    // modes.push_back(new GreenPulse());
+    // modes.push_back(new Flow());
+    // modes.push_back(new Driving());
+    // modes.push_back(new Warning());
+    // modes.push_back(new RainbowWaveUniform());
+    // modes.push_back(new FlowUniform());
+    // ModeManager::GetInstance().AddModes(modes);
+    // ModeManager::GetInstance().SwitchMode(ModeManager::Mode_t::kTestMode, true);
     // ModeManager::GetInstance().PlayQuickMode(ModeManager::Mode_t::kGreenPulse);
 
-    FastLED.clear();
-    FastLED.setBrightness(255);
+    FastLED.clear(true);
+    // FastLED.setBrightness(255);
     FastLED.show();
 
-    loopModes.push_back(ModeManager::Mode_t::kRainbowWaveUniform);
-    loopModes.push_back(ModeManager::Mode_t::kFlowUniform);
-    currentLoopMode = loopModes.begin();
-    switcher->SetInterval(5 * 60 * 1000);
-    switcher->Restart();
+    // loopModes.push_back(ModeManager::Mode_t::kRainbowWaveUniform);
+    // loopModes.push_back(ModeManager::Mode_t::kFlowUniform);
+    // currentLoopMode = loopModes.begin();
+    // switcher->SetInterval(5 * 60 * 1000);
+    // switcher->Restart();
+
+    testTimer->SetInterval(250);
+    testTimer->Restart();
 }
 
 void loop() {
 
     // processSerial();
 
-    if (switcher->RunInterval()) {
+    // if (switcher->RunInterval()) {
 
-        if (++currentLoopMode == loopModes.end()) {
+        // if (++currentLoopMode == loopModes.end()) {
 
-            currentLoopMode = loopModes.begin();
-        }
-        ModeManager::GetInstance().SwitchMode(*currentLoopMode);
-    }
+            // currentLoopMode = loopModes.begin();
+        // }
+        // ModeManager::GetInstance().SwitchMode(*currentLoopMode);
+    // }
+    // digitalWrite(LED_BUILTIN, Vehicle::GetInstance().GetTotal() != 900);
 
-    ModeManager::GetInstance().Step();
+    // ModeManager::GetInstance().Step();
     // Vehicle::GetInstance().ApplyReverse();
-    Vehicle::GetInstance().MoveHSVToRGB();
+    // Vehicle::GetInstance().MoveHSVToRGB();
     FastLED.show();
     // delay(2);
 
-    // Serial.println(digitalRead(K_PIN_LIGHT_BLINKER_LEFT));
-    // delay(10);
+    if (testTimer->RunInterval()) {
+        
+        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+    }
 }
 
 void processSerial() {
@@ -157,3 +160,27 @@ void ClearSerial() {
 
     while (Serial.available() > 0) { Serial.read(); }
 }
+
+/*CRGB ledd[300];
+CRGB lede[300];
+CRGB ledf[300];
+
+void setup() {
+
+    FastLED.addLeds<WS2812B, 2, GRB>(ledd, 300);
+    FastLED.addLeds<WS2812B, 3, GRB>(lede, 300);
+    FastLED.addLeds<WS2812B, 4, GRB>(ledf, 300);
+    FastLED.clear(true);
+}
+
+void loop() {
+
+    for (int i = 0; i < 300; i++) {
+
+        ledd[i] = CHSV(200, 255, 255);
+        lede[i] = CHSV(200, 255, 255);
+        ledf[i] = CHSV(200, 255, 255);
+    }
+    FastLED.show();
+}
+*/

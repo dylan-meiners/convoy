@@ -31,7 +31,7 @@ class Flow : public Mode {
                 K_MODE_FLOW_COLOR_HSV_V
             );
             m_fade = new uint8_t[Vehicle::GetInstance().GetTotal()];
-            memset(m_fade, 0, Vehicle::GetInstance().GetTotal());
+            // memset(m_fade, 0, Vehicle::GetInstance().GetTotal());
             ResetHead();
         }
 
@@ -79,7 +79,7 @@ class Flow : public Mode {
 
         void reset() {
 
-            memset(m_fade, 0, Vehicle::GetInstance().GetTotal());
+            // memset(m_fade, 0, Vehicle::GetInstance().GetTotal());
             ResetHead();
             m_timer->SetInterval(m_speed);
             m_timer->Restart();

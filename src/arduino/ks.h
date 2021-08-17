@@ -1,15 +1,15 @@
 #ifndef KS_H
 #define KS_H
 
-const int K_PIN_LIGHT_BRAKE         = 2;
-const int K_PIN_RUNNING_LIGHTS      = 3;
-const int K_PIN_LIGHT_BLINKER_LEFT  = 4;
-const int K_PIN_LIGHT_BLINKER_RIGHT = 5;
-const int K_PIN_LIGHT_REVERSE       = 6;
+const int K_PIN_LIGHT_BRAKE         = 10;
+const int K_PIN_RUNNING_LIGHTS      = 10;
+const int K_PIN_LIGHT_BLINKER_LEFT  = 10;
+const int K_PIN_LIGHT_BLINKER_RIGHT = 10;
+const int K_PIN_LIGHT_REVERSE       = 10;
 
-const int K_PIN_STRIP_FRONT         = 7;
-const int K_PIN_STRIP_LEFT          = 8;
-const int K_PIN_STRIP_BACK          = 9;
+const int K_PIN_STRIP_FRONT         = 10;
+const int K_PIN_STRIP_LEFT          = 10;
+const int K_PIN_STRIP_BACK          = 10;
 const int K_PIN_STRIP_RIGHT         = 10;
 
 const int K_PIN_STRIP_ONE           = 2;
