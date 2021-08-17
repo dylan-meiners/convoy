@@ -1,5 +1,5 @@
-#ifndef VEHICLE_H
-#define VEHICLE_H
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
 #include <FastLED.h>
 #include "ArduinoSTL.h"
@@ -12,10 +12,10 @@ typedef struct {
     int led;
 } Location;
 
-class Vehicle {
+class System {
 
     public:
-        Vehicle() {
+        System() {
 
             m_locked = false;
             m_totalLEDs = 0;
@@ -26,9 +26,9 @@ class Vehicle {
             }
         }
 
-        static Vehicle& GetInstance() {
+        static System& GetInstance() {
 
-            static Vehicle* the_one_and_only = new Vehicle();
+            static System* the_one_and_only = new System();
             return *the_one_and_only;
         }
 
@@ -306,10 +306,10 @@ class Vehicle {
         };
 
     private:
-        Vehicle(const Vehicle&) = delete;
-        Vehicle& operator=(const Vehicle&) = delete;
-        Vehicle(Vehicle&&) = delete;
-        Vehicle& operator=(Vehicle&&) = delete;
+        System(const System&) = delete;
+        System& operator=(const System&) = delete;
+        System(System&&) = delete;
+        System& operator=(System&&) = delete;
 
         bool m_locked;
         int m_totalLEDs;

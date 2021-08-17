@@ -1,5 +1,5 @@
-#ifndef FLOW_H
-#define FLOW_H
+#ifndef FLOWUNIFORM_H
+#define FLOWUNIFORM_H
 
 /**
  * TODO
@@ -13,10 +13,10 @@
 #include "../../Timer.h"
 #include "../../ks.h"
 
-class Flow : public Mode {
+class FlowUniform : public Mode {
 
     public:
-        Flow(System::Direction direction = System::Direction::kForward) {
+        FlowUniform(System::Direction direction = System::Direction::kForward) {
 
             m_dir = direction;
             dataLength = K_MODE_DATA_LENGTH_FLOW;
@@ -30,8 +30,8 @@ class Flow : public Mode {
                 K_MODE_FLOW_COLOR_HSV_S,
                 K_MODE_FLOW_COLOR_HSV_V
             );
-            m_fade = new uint8_t[System::GetInstance().GetTotal()];
-            memset(m_fade, 0, System::GetInstance().GetTotal());
+            m_fade = new uint8_t[System::GetInstance().GetStrips()[0]->GetNumLEDs()];
+            // memset(m_fade, 0, System::GetInstance().GetStrips()[0]->GetNumLEDs());
             ResetHead();
         }
 
@@ -45,24 +45,22 @@ class Flow : public Mode {
                 
                     for (int i = 0; i < m_flowLength; i++) {
                         
-                        Location* l = System::GetInstance().GetFullLocation(m_head + i);
-                        System::GetInstance().GetStrips()[l->strip]->leds[l->led] = m_color;
+                        System::GetInstance().UniformSet(m_head + i, m_color.h, m_color.s, m_color.v);
                         m_fade[m_head] = random(8) + 1;
                     }
 
                     // If we just hit the last led
-                    if (++m_head + m_flowLength - 1 >= System::GetInstance().GetTotal()) {
+                    if (++m_head + m_flowLength - 1 >= System::GetInstance().GetStrips()[0]->GetNumLEDs()) {
 
                         m_dir = System::Direction::kReversed;
-                        m_head = System::GetInstance().GetTotal() - 2;
+                        m_head = System::GetInstance().GetStrips()[0]->GetNumLEDs() - 2;
                     }
                 }
                 else {
 
                     for (int i = 0; i < m_flowLength; i++) {
                         
-                        Location* l = System::GetInstance().GetFullLocation(m_head - i);
-                        System::GetInstance().GetStrips()[l->strip]->leds[l->led] = m_color;
+                        System::GetInstance().UniformSet(m_head - i, m_color.h, m_color.s, m_color.v);
                         m_fade[m_head] = random(8) + 1;
                     }
 
@@ -79,7 +77,7 @@ class Flow : public Mode {
 
         void reset() {
 
-            memset(m_fade, 0, System::GetInstance().GetTotal());
+            // memset(m_fade, 0, System::GetInstance().GetStrips()[0]->GetNumLEDs());
             ResetHead();
             m_timer->SetInterval(m_speed);
             m_timer->Restart();
@@ -88,24 +86,29 @@ class Flow : public Mode {
 
         void RandomFadeToBlack() {
 
-            for (int i = 0; i < System::GetInstance().GetTotal(); i++) {
+            for (int i = 0; i < System::GetInstance().GetStrips()[0]->GetNumLEDs(); i++) {
 
                 if (m_fade[i] > 0) {
                 
-                    Location* l = System::GetInstance().GetFullLocation(i);
                     if (m_fadeTimer->RunIterationInterval()) {
                         
-                        System::GetInstance().GetStrips()[l->strip]->leds[l->led].h++;
-                    }
-                    uint8_t* v = &System::GetInstance().GetStrips()[l->strip]->leds[l->led].v;
-                    if (*v < m_fade[i]) {
+                        for (int j = 0; j < System::GetInstance().GetStrips().size(); j++) {
 
-                        *v = 0;
-                        m_fade[i] = 0;
+                            System::GetInstance().GetStrips()[j]->leds[i].h++;
+                        }
                     }
-                    else {
+                    for (int j = 0; j < System::GetInstance().GetStrips().size(); j++) {
                         
-                        *v -= m_fade[i];
+                        uint8_t* v = &System::GetInstance().GetStrips()[j]->leds[i].v;
+                        if (*v < m_fade[i]) {
+
+                            *v = 0;
+                            m_fade[i] = 0;
+                        }
+                        else {
+                            
+                            *v -= m_fade[i];
+                        }
                     }
                 }
             }
@@ -129,7 +132,7 @@ class Flow : public Mode {
 
         void ResetHead() {
 
-            m_head = m_dir == System::Direction::kForward ? 0 : System::GetInstance().GetTotal();
+            m_head = m_dir == System::Direction::kForward ? 0 : System::GetInstance().GetStrips()[0]->GetNumLEDs();
         }
 
         System::Direction m_dir;

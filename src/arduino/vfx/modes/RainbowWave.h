@@ -5,7 +5,7 @@
 #include <ArduinoSTL.h>
 #include <vector>
 #include "../Mode.h"
-#include "../../Vehicle.h"
+#include "../../System.h"
 #include "../../ks.h"
 
 class RainbowWave : public Mode {
@@ -21,16 +21,16 @@ class RainbowWave : public Mode {
 
         bool step() {
                 
-            for (int i = 0; i < Vehicle::GetInstance().GetTotal(); i++) {
+            for (int i = 0; i < System::GetInstance().GetTotal(); i++) {
                 
-                Location* l = Vehicle::GetInstance().GetFullLocation(i);
-                Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(
-                    fmod((i * 255.0 / (double)Vehicle::GetInstance().GetTotal()) + m_waveCounter * m_waveSpeedScalar, 255.0),
+                Location* l = System::GetInstance().GetFullLocation(i);
+                System::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(
+                    fmod((i * 255.0 / (double)System::GetInstance().GetTotal()) + m_waveCounter * m_waveSpeedScalar, 255.0),
                     255,
                     255
                 );
             }
-            m_waveCounter += (255.0 / (double)Vehicle::GetInstance().GetTotal()) * m_waveSpeedScalar;
+            m_waveCounter += (255.0 / (double)System::GetInstance().GetTotal()) * m_waveSpeedScalar;
             return false;
         }
 

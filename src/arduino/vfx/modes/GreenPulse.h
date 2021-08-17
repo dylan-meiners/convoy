@@ -2,7 +2,7 @@
 #define GREENPULSE_H
 
 #include "../Mode.h"
-#include "../../Vehicle.h"
+#include "../../System.h"
 #include "../../ks.h"
 #include "../../Timer.h"
 
@@ -79,7 +79,7 @@ class GreenPulse : public Mode {
     private:
         void Set(bool on = true) {
 
-            Vehicle::GetInstance().SetAllHSV(K_COLOR_HSV_H_GREEN, K_COLOR_HSV_S_GREEN, on ? K_COLOR_HSV_V_GREEN : 0);
+            System::GetInstance().SetAllHSV(K_COLOR_HSV_H_GREEN, K_COLOR_HSV_S_GREEN, on ? K_COLOR_HSV_V_GREEN : 0);
         }
 
         enum Status {

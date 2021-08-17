@@ -2,7 +2,7 @@
 #define WARNING_H
 
 #include "../Mode.h"
-#include "../../Vehicle.h"
+#include "../../System.h"
 #include "../../Timer.h"
 #include "../../ks.h"
 
@@ -36,9 +36,9 @@ class Warning : public Mode {
                 }
             }
 
-            for (int i = 0; i < Vehicle::GetInstance().GetStrips().size(); i++) {
+            for (int i = 0; i < System::GetInstance().GetStrips().size(); i++) {
 
-                Strip* tempStrip = Vehicle::GetInstance().GetStrips()[i];
+                Strip* tempStrip = System::GetInstance().GetStrips()[i];
                 // This needs to be integer division
                 int batches = tempStrip->GetNumLEDs() / K_MODE_WARNING_BATCH_SIZE_HALF;
                 for (int j = 0; j < batches; j++) {

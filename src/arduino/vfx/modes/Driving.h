@@ -3,7 +3,7 @@
 
 #include "../Mode.h"
 #include "../ModeManager.h"
-#include "../../Vehicle.h"
+#include "../../System.h"
 #include "../../Timer.h"
 #include "../../ks.h"
 
@@ -28,7 +28,7 @@ class Driving : public Mode {
         bool step() {
 
             // TODO: for now, only use the first back strip
-            std::vector<Strip*>* backStrips = Vehicle::GetInstance().GetStripsByType(Strip::Type::kBack);
+            std::vector<Strip*>* backStrips = System::GetInstance().GetStripsByType(Strip::Type::kBack);
             Strip* backStrip = (*backStrips)[0];
 
             bool brake =    digitalRead(K_PIN_LIGHT_BRAKE);
@@ -140,7 +140,7 @@ class Driving : public Mode {
             }*/
 
             std::vector<Strip*>* runningStrips;
-            runningStrips = Vehicle::GetInstance().GetStripsByType(Strip::Type::kLeft);
+            runningStrips = System::GetInstance().GetStripsByType(Strip::Type::kLeft);
             for (int i = 0; i < runningStrips->size(); i++) {
 
                 if (running) {
@@ -160,7 +160,7 @@ class Driving : public Mode {
                     );
                 }
             }
-            runningStrips = Vehicle::GetInstance().GetStripsByType(Strip::Type::kRight);
+            runningStrips = System::GetInstance().GetStripsByType(Strip::Type::kRight);
             for (int i = 0; i < runningStrips->size(); i++) {
 
                 if (running) {
@@ -328,7 +328,7 @@ class Driving : public Mode {
 
             if (reverse) {
 
-                Vehicle::GetInstance().SetAllHSV(
+                System::GetInstance().SetAllHSV(
                     K_COLOR_HSV_H_WHITE,
                     K_COLOR_HSV_S_WHITE,
                     K_COLOR_HSV_V_WHITE

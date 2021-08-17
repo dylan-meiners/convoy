@@ -5,7 +5,7 @@
 #include <ArduinoSTL.h>
 #include <vector>
 #include "../Mode.h"
-#include "../../Vehicle.h"
+#include "../../System.h"
 #include "../../Timer.h"
 
 class TestMode : public Mode {
@@ -25,13 +25,13 @@ class TestMode : public Mode {
 
             if (m_timer->RunInterval()) {
             
-                Vehicle::GetInstance().Clear();
-                Location* l = Vehicle::GetInstance().GetFullLocation(m_step);
-                Vehicle::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(0, 255, 255);
+                System::GetInstance().Clear();
+                Location* l = System::GetInstance().GetFullLocation(m_step);
+                System::GetInstance().GetStrips()[l->strip]->leds[l->led] = CHSV(0, 255, 255);
                 if (m_forward) {
 
                     m_step++;
-                    if (m_step > Vehicle::GetInstance().GetTotal() - 1) {
+                    if (m_step > System::GetInstance().GetTotal() - 1) {
 
                         m_forward = false;
                         m_step -= 2;
