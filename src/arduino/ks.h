@@ -12,6 +12,8 @@ const int K_PIN_STRIP_LEFT          = 8;
 const int K_PIN_STRIP_BACK          = 9;
 const int K_PIN_STRIP_RIGHT         = 10;
 
+const int K_PIN_BACKRACK_LIGHT      = 11;
+
 const int K_NUM_LEDS_STRIP_FRONT    = 0;
 const int K_NUM_LEDS_STRIP_RIGHT    = 146;
 const int K_NUM_LEDS_STRIP_LEFT     = 146;

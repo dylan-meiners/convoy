@@ -38,6 +38,7 @@ void setup() {
     pinMode(K_PIN_STRIP_RIGHT, OUTPUT);
     pinMode(K_PIN_STRIP_BACK, OUTPUT);
     pinMode(K_PIN_STRIP_LEFT, OUTPUT);
+    pinMode(K_PIN_BACKRACK_LIGHT, OUTPUT);
 
     pinMode(K_PIN_LIGHT_BRAKE, INPUT);
     pinMode(K_PIN_RUNNING_LIGHTS, INPUT);

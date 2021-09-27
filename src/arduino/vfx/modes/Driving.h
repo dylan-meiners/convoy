@@ -185,13 +185,17 @@ class Driving : public Mode {
 
                 ModeManager::GetInstance().GetMode(ModeManager::Mode_t::kWarning)->step();
                 m_flashersTimer->Restart();
+                digitalWrite(K_PIN_BACKRACK_LIGHT, HIGH);
             }
             // If the flashers could still be on
             else if (!m_flashersTimer->WhenElapsed((int)K_MS_PER_BLINK + K_MS_FLASHERS_TIMEOUT)) {
 
                 ModeManager::GetInstance().GetMode(ModeManager::Mode_t::kWarning)->step();
+                digitalWrite(K_PIN_BACKRACK_LIGHT, HIGH);
             }
             else {
+                
+                digitalWrite(K_PIN_BACKRACK_LIGHT, LOW);
                 
                 if (left) {
 
@@ -326,13 +330,16 @@ class Driving : public Mode {
                 }
             }
 
-            if (reverse) {
+            if (!(right && left) && m_flashersTimer->WhenElapsed((int)K_MS_PER_BLINK + K_MS_FLASHERS_TIMEOUT)) {
+            
+                if (reverse) {
 
-                System::GetInstance().SetAllHSV(
-                    K_COLOR_HSV_H_WHITE,
-                    K_COLOR_HSV_S_WHITE,
-                    K_COLOR_HSV_V_WHITE
-                );
+                    System::GetInstance().SetAllHSV(
+                        K_COLOR_HSV_H_WHITE,
+                        K_COLOR_HSV_S_WHITE,
+                        K_COLOR_HSV_V_WHITE
+                    );
+                }
             }
             return false;
         }
