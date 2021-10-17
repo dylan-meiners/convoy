@@ -10,11 +10,11 @@ class Client:
     def __init__(self):
         self._port = None
         self._log("init")
-        self.arduino = serial.Serial("/dev/ttyACM0", ks.SERIAL_BAUD, timeout=ks.SERIAL_TIMEOUT)
-        time.sleep(1) # I have no idea why, but if this isn't here EVERYTHING BREAKS
-        self._log("Initialized serial on: " + str(self.arduino.name) + " with baud: " + str(ks.SERIAL_BAUD) +  " and timeout: " + str(ks.SERIAL_TIMEOUT))
+        #self.arduino = serial.Serial("/dev/ttyACM0", ks.SERIAL_BAUD, timeout=ks.SERIAL_TIMEOUT)
+        #time.sleep(1) # I have no idea why, but if this isn't here EVERYTHING BREAKS
+        #self._log("Initialized serial on: " + str(self.arduino.name) + " with baud: " + str(ks.SERIAL_BAUD) +  " and timeout: " + str(ks.SERIAL_TIMEOUT))
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.connect((ks.HOST, ks.PORT_DISPATCHER))
+        server.connect((ks.HOST, ks.PORT_INITIAL))
         port_raw = server.recv(2)
         self._port = int.from_bytes(port_raw, "big", signed=False)
         self._log("Received redirect to port: " + str(self._port))
@@ -40,7 +40,7 @@ class Client:
                 if good:
                     self._log("Good data")
                     # test mode
-                    self.sendToArduino([3, 5, 25, 160, 255, 255])
+                    #self.sendToArduino([3, 5, 25, 160, 255, 255])
 
                 else:
                     self._log("Bad data")

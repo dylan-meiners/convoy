@@ -1,7 +1,11 @@
+from modes.rainbow_wave import RainbowWave
 import threading
-import dispatcher
 import logger
 import time
+from enum import Enum
+from configparser import ConfigParser
+import tcp.dispatcher as dispatcher
+import udp.commander as commander
 
 def main():
     _log("init")
@@ -10,9 +14,23 @@ def main():
     # logging.basicConfig(format=format, level=logging.INFO, datefmt="%H:%M:%S")
     # logging.getLogger("main")
     # logging.info("Welcome")
-    disp = dispatcher.Dispatcher()
-    disp_thread = threading.Thread(target=disp.main)
-    disp_thread.start()
+
+    config = ConfigParser()
+    config.optionxform = str
+    config.read("config.cfg")
+    method = config["Settings"]["CommunicationProtocol"]
+
+    if method == "TCP":
+        disp = dispatcher.Dispatcher()
+        disp_thread = threading.Thread(target=disp.main)
+        disp_thread.start()
+    elif method == "UDP":
+        commando = commander.Commander()
+        commando_thread = threading.Thread(target=commando.main)
+        commando_thread.start()
+    else:
+        _log("Communicaiton method is not a valid choice. Valid choices include: \"TCP\" and \"UDP\"")
+        exit(-1)
 
     while True:
         time.sleep(1)

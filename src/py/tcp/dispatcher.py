@@ -4,7 +4,7 @@ import time
 import socket
 import ks
 from contextlib import closing
-import middleman
+import tcp.middleman
 import errno
 import socketutil
 
@@ -20,7 +20,7 @@ class Dispatcher:
         self._log("main")
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._log("Waiting for dispatcher to bind...")
-        socketutil.bind_forever(server, ks.HOST, ks.PORT_DISPATCHER)
+        socketutil.bind_forever(server, ks.HOST, ks.PORT_INITIAL)
         self._log("Dispatcher bound")
         server.listen()
         while True:

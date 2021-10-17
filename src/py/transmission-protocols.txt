@@ -23,3 +23,17 @@ if ack not good or no ack:
 data[0] = SOH
 data[1] = number of bytes to be sent (n)
 data[2] = EOT
+
+===============================================================================
+                                      UDP
+===============================================================================
+[from commander to client]
+
+(data)
+data[0] = SOH
+data[1] = ident
+data[2] = '<'
+data[3] = specific data
+data[4] = '>'
+data[5] = lenght of specific in bytes
+data[6] = EOT
