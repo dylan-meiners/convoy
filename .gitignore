@@ -2,6 +2,7 @@
 convoy
 **/__pycache__
 venv
+commands.txt
 *.elf
 *.hex
 *.code-workspace

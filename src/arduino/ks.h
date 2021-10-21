@@ -50,7 +50,7 @@ const uint8_t K_COLOR_HSV_V_AMBER   = 255;
 
 const int K_MODE_DATA_LENGTH_GREEN_PULSE    = 0;
 const int K_MODE_DATA_LENGTH_FLOW           = 5;
-const int K_MODE_DATA_LENGTH_RAINBOW_WAVE   = 1;
+const int K_MODE_DATA_LENGTH_RAINBOW_WAVE   = 2;
 
 const double K_MODE_RAINBOW_WAVE_SPEED_SCALAR   = 1.0;
 

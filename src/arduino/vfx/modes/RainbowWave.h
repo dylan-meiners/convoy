@@ -31,6 +31,7 @@ class RainbowWave : public Mode {
                 );
             }
             m_waveCounter += (255.0 / (double)System::GetInstance().GetTotal()) * m_waveSpeedScalar;
+
             return false;
         }
 
@@ -44,7 +45,8 @@ class RainbowWave : public Mode {
 
         void parse() {
 
-            m_waveSpeedScalar = data[0] / 255.0;
+            m_waveCounter = data[0] == 1 ? 0.0 : m_waveCounter;
+            m_waveSpeedScalar = data[1] / 127.0;
         }
 
         double m_waveCounter;
