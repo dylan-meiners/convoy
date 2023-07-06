@@ -18,6 +18,7 @@ class ModeManager {
 
         static void AddModes(std::vector<Mode*>& modesToSet) {
 
+            m_nModes = modesToSet.size();
             modes = new Mode*[modesToSet.size()];
             for (int i = 0; i < (int)modesToSet.size(); i++) {
 
@@ -30,10 +31,10 @@ class ModeManager {
 
             if(modes[m_activeMode]->step()) {
 
-                // Do not use switchMode(E_Mode) because it will reset the mode. If
-                // step returns true, then it is returning from a quick effect so,
-                // strictly resume the previous mode.
+                // If step returns true, then it is returning from a quick
+                // mode, so resume the previous mode.
                 m_activeMode = m_oldMode;
+                m_playingQuickMode = false;
             }
         }
 
@@ -55,12 +56,23 @@ class ModeManager {
 
             m_oldMode = m_activeMode;
             SwitchMode(modeToPlay);
+            m_playingQuickMode = true;
+        }
+
+        static int NumModes() {
+            return m_nModes;
+        }
+
+        static bool PlayingQuickMode() {
+            return m_playingQuickMode;
         }
 
     private:
         static Mode** modes;
         static Mode_t m_activeMode;
         static Mode_t m_oldMode;
+        static int m_nModes;
+        static bool m_playingQuickMode;
 };
 
 #endif

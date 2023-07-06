@@ -19,8 +19,6 @@ Strip* stripLeft = new Strip(K_PIN_STRIP_LEFT, K_NUM_LEDS_STRIP_LEFT, Strip::Typ
 Strip* stripBack = new Strip(K_PIN_STRIP_BACK, K_NUM_LEDS_STRIP_BACK, Strip::Type::kBack, true);
 std::vector<Strip*> strips;
 
-int nModes;
-
 void processSerial();
 void ClearSerial();
 
@@ -61,9 +59,8 @@ void setup() {
     modes.push_back(new Driving());
     modes.push_back(new Warning());
     ModeManager::AddModes(modes);
-    ModeManager::SwitchMode(ModeManager::Mode_t::kDriving, true);
+    ((ColorPulse*)ModeManager::GetMode(ModeManager::Mode_t::kColorPulse))->SetColor(K_COLOR_HSV_V_GREEN);
     ModeManager::PlayQuickMode(ModeManager::Mode_t::kColorPulse);
-    nModes = modes.size();
 
     FastLED.clear();
     FastLED.setBrightness(255);
@@ -71,29 +68,25 @@ void setup() {
 }
 
 void loop() {
-
-    // processSerial();
-
     ModeManager::Step();
+
+    // Only check to switch modes if we're not playing a quick modee
+    if (!ModeManager::PlayingQuickMode()) {
+        processSerial();
+    }
+
     // System::GetInstance().ApplyReverse();
     System::GetInstance().MoveHSVToRGB();
     FastLED.show();
-    // delay(2);
-
-    // Serial.println(digitalRead(K_PIN_LIGHT_BLINKER_LEFT));
-    // delay(10);
 }
 
 void processSerial() {
-
     static char* data = new char[256];
     static char* tmp = new char;
 
     int avail = Serial.available();
     if (avail > 0) {
-
         if (avail > 1) {
-
             // TODO: log("Data request check has more than one byte available (%d); reading first available and discarding the rest", avail, Logger::LogLevel::Info)    
         }
         if (digitalRead(K_INCOMING_DATA_PIN)) {
@@ -101,7 +94,6 @@ void processSerial() {
             Serial.write(GO);
             int numRecvd = Serial.readBytes(tmp, 1);
             if (numRecvd == 1) {
-
                 int cmd = *tmp;
                 switch (cmd) {
                     case K_CMD_SWITCH_MODE:
@@ -109,7 +101,7 @@ void processSerial() {
                         numRecvd = Serial.readBytes(tmp, 1);
                         if (numRecvd == 1) {
                             int mode = *tmp;
-                            if (mode <= nModes) {
+                            if (mode <= ModeManager::NumModes()) {
                                 int dataLength = ModeManager::GetMode((ModeManager::Mode_t)mode)->dataLength;
                                 if (dataLength <= 256) {
                                     numRecvd = Serial.readBytes(data, dataLength);
@@ -119,7 +111,6 @@ void processSerial() {
                                         ModeManager::PlayQuickMode(ModeManager::Mode_t::kColorPulse);
                                     }
                                     else {
-
                                         if (dataLength > 0) {
                                             memcpy(ModeManager::GetMode((ModeManager::Mode_t)mode)->data, data, dataLength);
                                             ModeManager::GetMode((ModeManager::Mode_t)mode)->parse();
