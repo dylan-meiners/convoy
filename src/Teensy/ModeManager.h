@@ -10,35 +10,23 @@ class ModeManager {
         enum Mode_t {
             kTestMode,
             kRainbowWave,
-            kGreenPulse,
+            kColorPulse,
             kFlow,
             kDriving,
             kWarning
         };
 
-        ModeManager() {
-
-            m_activeMode = kDriving;
-            m_oldMode = kDriving;
-        }
-
-        static ModeManager& GetInstance() {
-
-            static ModeManager* the_one_and_only = new ModeManager();
-            return *the_one_and_only;
-        }
-
-        void AddModes(std::vector<Mode*>& modesToSet) {
+        static void AddModes(std::vector<Mode*>& modesToSet) {
 
             modes = new Mode*[modesToSet.size()];
-            for (int i = 0; i < modesToSet.size(); i++) {
+            for (int i = 0; i < (int)modesToSet.size(); i++) {
 
                 modes[i] = modesToSet[i];
                 modes[i]->reset();
             }
         }
 
-        void Step() {
+        static void Step() {
 
             if(modes[m_activeMode]->step()) {
 
@@ -49,12 +37,12 @@ class ModeManager {
             }
         }
 
-        Mode* GetMode(Mode_t mode) {
+        static Mode* GetMode(Mode_t mode) {
 
             return modes[mode];
         }
 
-        void SwitchMode(Mode_t modeToSwtichTo, bool force = false) {
+        static void SwitchMode(Mode_t modeToSwtichTo, bool force = false) {
 
             if (force || m_activeMode != modeToSwtichTo) {
 
@@ -63,21 +51,16 @@ class ModeManager {
             }
         }
 
-        void PlayQuickMode(Mode_t modeToPlay) {
+        static void PlayQuickMode(Mode_t modeToPlay) {
 
             m_oldMode = m_activeMode;
             SwitchMode(modeToPlay);
         }
 
     private:
-        ModeManager(const ModeManager&) = delete;
-        ModeManager& operator=(const ModeManager&) = delete;
-        ModeManager(ModeManager&&) = delete;
-        ModeManager& operator=(ModeManager&&) = delete;
-
-        Mode** modes;
-        Mode_t m_activeMode;
-        Mode_t m_oldMode;
+        static Mode** modes;
+        static Mode_t m_activeMode;
+        static Mode_t m_oldMode;
 };
 
 #endif

@@ -31,7 +31,7 @@ class Timer {
             m_time = millis();
         }
 
-        bool WhenElapsed(long time) {
+        bool WhenElapsed(uint32_t time) {
 
             return ((millis() - m_time) >= time);
         }
@@ -65,9 +65,9 @@ class Timer {
         }
 
     private:
-        long m_time;
+        uint32_t m_time;
         bool m_intervalSet;
-        long m_interval;
+        uint32_t m_interval;
         bool m_running;
         int m_iter;
         int m_iterInterval;

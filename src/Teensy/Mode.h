@@ -9,7 +9,7 @@ class Mode {
         virtual void parse();
 
         int dataLength;
-        uint8_t* data;
+        char* data;
 };
 
 #endif

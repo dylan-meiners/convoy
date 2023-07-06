@@ -1,7 +1,7 @@
 #ifndef STRIP_H
 #define STRIP_H
 
-#include <FastLED.h>
+#include "FastLED.h"
 #include "ks.h"
 
 class Strip {

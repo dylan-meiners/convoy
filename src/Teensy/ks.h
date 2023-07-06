@@ -25,8 +25,9 @@ const int K_BLINKER_BPM             = 160;
 const double K_MS_PER_BLINK         = 60.0 / K_BLINKER_BPM * 1000.0;
 const int K_MS_FLASHERS_TIMEOUT     = 100;
 
-const int INCOMING_DATA_REQUEST     = 1;
-const int ACK                       = 6;
+constexpr int K_INCOMING_DATA_PIN = 12;
+const int GO                        = 26;
+constexpr char K_CMD_SWITCH_MODE	= 27;
 
 const uint8_t K_COLOR_HSV_H_OFF     = 0;
 const uint8_t K_COLOR_HSV_S_OFF     = 0;
@@ -48,7 +49,7 @@ const uint8_t K_COLOR_HSV_H_AMBER   = 21;
 const uint8_t K_COLOR_HSV_S_AMBER   = 255;
 const uint8_t K_COLOR_HSV_V_AMBER   = 255;
 
-const int K_MODE_DATA_LENGTH_GREEN_PULSE    = 0;
+const int K_MODE_DATA_LENGTH_GREEN_PULSE    = 1;
 const int K_MODE_DATA_LENGTH_FLOW           = 5;
 const int K_MODE_DATA_LENGTH_RAINBOW_WAVE   = 2;
 
